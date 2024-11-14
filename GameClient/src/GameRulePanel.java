@@ -11,12 +11,12 @@ public class GameRulePanel extends JPanel {
     private ImageIcon backImage = new ImageIcon("GameClient/image/back.png");
 
     private JButton gameStartButton = createImageButton(gameStartImage, 729, 521, 214, 30);
-    private JButton backButton = createImageButton(backImage, 39, 45,43, 30);
+    private JButton backButton = createImageButton(backImage, 39, 45, 43, 30);
 
     private ImageIcon gameStartHoverImage = new ImageIcon(applyColorFilter(gameStartImage, Color.decode("#B4FDFF")));
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
 
-    public GameRulePanel() {
+    public GameRulePanel(GameClientFrame frame) {
         setLayout(null);
 
         add(gameStartButton);  // 버튼 패널에 추가
@@ -26,28 +26,32 @@ public class GameRulePanel extends JPanel {
         gameStartButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                GameClientFrame.isGameStartScreen = true;  // 게임 규칙 화면으로 상태 변경
+                frame.selectScreen();  // 화면 전환 메서드 호출
             }
 
-            public void mouseEntered(MouseEvent e){
+            public void mouseEntered(MouseEvent e) {
                 gameStartButton.setIcon(gameStartHoverImage);
             }
 
-            public void mouseExited(MouseEvent e){
+            public void mouseExited(MouseEvent e) {
                 gameStartButton.setIcon(gameStartImage);
             }
         });
 
-        // 스타트 버튼 클릭 리스너 추가
+        // back 버튼 클릭 리스너 추가
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                GameClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
+                frame.selectScreen();  // 화면 전환 메서드 호출
             }
 
-            public void mouseEntered(MouseEvent e){
+            public void mouseEntered(MouseEvent e) {
                 backButton.setIcon(backHoverImage);
             }
 
-            public void mouseExited(MouseEvent e){
+            public void mouseExited(MouseEvent e) {
                 backButton.setIcon(backHoverImage);
             }
         });

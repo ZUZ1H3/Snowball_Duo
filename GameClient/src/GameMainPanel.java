@@ -19,7 +19,6 @@ public class GameMainPanel extends JPanel {
     private ImageIcon gameStartHoverImage = new ImageIcon(applyColorFilter(gameStartImage, Color.decode("#B4FDFF")));
     private ImageIcon gameRulesHoverImage = new ImageIcon(applyColorFilter(gameRulesImage, Color.decode("#B4FDFF")));
 
-    private GameClientFrame frame;
 
     public GameMainPanel(GameClientFrame frame) {
         setLayout(null);
@@ -31,6 +30,8 @@ public class GameMainPanel extends JPanel {
         gameStartButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                GameClientFrame.isGameStartScreen = true; // 게임 시작 화면으로 상태 변경
+                frame.selectScreen(); // 화면 전환 메서드 호출
             }
 
             public void mouseEntered(MouseEvent e){
