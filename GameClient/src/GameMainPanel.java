@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 public class GameMainPanel extends JPanel {
     private Image backgroundImage = new ImageIcon("GameClient/image/background.png").getImage();
@@ -13,6 +16,9 @@ public class GameMainPanel extends JPanel {
     private JButton gameStartButton = createImageButton(gameStartImage, 709, 377, 214, 30);
     private JButton gameRulesButton = createImageButton(gameRulesImage, 709, 440, 203, 30);
 
+    private ImageIcon gameStartHoverImage = new ImageIcon(applyColorFilter(gameStartImage, Color.decode("#B4FDFF")));
+    private ImageIcon gameRulesHoverImage = new ImageIcon(applyColorFilter(gameRulesImage, Color.decode("#B4FDFF")));
+
     private GameClientFrame frame;
 
     public GameMainPanel() {
@@ -22,7 +28,33 @@ public class GameMainPanel extends JPanel {
         add(gameRulesButton);
 
         // 스타트 버튼 클릭 리스너 추가
-        gameStartButton.addActionListener(e -> {
+        gameStartButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+            }
+
+            public void mouseEntered(MouseEvent e){
+                gameStartButton.setIcon(gameStartHoverImage);
+            }
+
+            public void mouseExited(MouseEvent e){
+                gameStartButton.setIcon(gameStartImage);
+            }
+        });
+
+        // 스타트 버튼 클릭 리스너 추가
+        gameRulesButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+            }
+
+            public void mouseEntered(MouseEvent e){
+                gameRulesButton.setIcon(gameRulesHoverImage);
+            }
+
+            public void mouseExited(MouseEvent e){
+                gameRulesButton.setIcon(gameRulesImage);
+            }
         });
     }
 
@@ -32,6 +64,25 @@ public class GameMainPanel extends JPanel {
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);  // 배경 없애기
         return button;
+    }
+
+    // 기본 이미지를 BufferedImage로 변환
+    private BufferedImage applyColorFilter(ImageIcon icon, Color filterColor) {
+        BufferedImage bufferedImage = new BufferedImage(
+                icon.getIconWidth(),
+                icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        // Graphics2D로 기본 이미지 위에 색상 필터를 적용
+        Graphics2D g2d = bufferedImage.createGraphics();
+        g2d.drawImage(icon.getImage(), 0, 0, null);
+        g2d.setComposite(AlphaComposite.SrcAtop.derive(0.5f)); // 투명도 조정
+        g2d.setColor(filterColor);
+        g2d.fillRect(0, 0, icon.getIconWidth(), icon.getIconHeight());
+        g2d.dispose();
+
+        return bufferedImage;
     }
 
     protected void paintComponent(Graphics g) {
