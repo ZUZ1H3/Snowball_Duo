@@ -21,7 +21,7 @@ public class GameMainPanel extends JPanel {
 
     private GameClientFrame frame;
 
-    public GameMainPanel() {
+    public GameMainPanel(GameClientFrame frame) {
         setLayout(null);
 
         add(gameStartButton);  // 버튼 패널에 추가
@@ -42,10 +42,11 @@ public class GameMainPanel extends JPanel {
             }
         });
 
-        // 스타트 버튼 클릭 리스너 추가
         gameRulesButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                GameClientFrame.isGameRulesScreen = true;  // 게임 규칙 화면으로 상태 변경
+                frame.selectScreen();  // 화면 전환 메서드 호출
             }
 
             public void mouseEntered(MouseEvent e){
