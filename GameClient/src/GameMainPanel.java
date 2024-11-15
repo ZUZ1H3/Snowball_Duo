@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 public class GameMainPanel extends JPanel {
     private Image backgroundImage = new ImageIcon("GameClient/image/background.png").getImage();
     private Image titleImage = new ImageIcon("GameClient/image/title.png").getImage();
-    private Image penguinImage = new ImageIcon("GameClient/image/penguin.png").getImage();
-    private Image sealImage = new ImageIcon("GameClient/image/seal.png").getImage();
+    private Image penguinImage = new ImageIcon("GameClient/image/penguin_big.png").getImage();
+    private Image sealImage = new ImageIcon("GameClient/image/seal_big.png").getImage();
 
     private ImageIcon gameStartImage = new ImageIcon("GameClient/image/game_start.png");
     private ImageIcon gameRulesImage = new ImageIcon("GameClient/image/game_rules.png");
