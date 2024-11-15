@@ -11,8 +11,7 @@ import javax.swing.JOptionPane;
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
     String ip_addr = "127.0.0.1";
-    int port_no;
-    int roomId;
+    int port;
     int playerCharacter = 0;
 
     private static final String ALLOW_LOGIN_MSG = "ALLOW";
@@ -27,14 +26,13 @@ public class ListenNetwork extends Thread {
     public static boolean isPlayingGame = false;
     private String userName = "";
 
-    public ListenNetwork(String userName, int port_no) {
+    public ListenNetwork(String userName, int port) {
         this.userName = userName;
-        this.port_no = port_no;
+        this.port = port;
         System.out.println(ip_addr);
-        System.out.println(port_no);
-        this.roomId = roomId;
+        System.out.println(port);
         try {
-            socket = new Socket(ip_addr, port_no);
+            socket = new Socket(ip_addr, port);
             is = socket.getInputStream();
             os = socket.getOutputStream();
             oos = new ObjectOutputStream(socket.getOutputStream());
@@ -44,14 +42,11 @@ public class ListenNetwork extends Thread {
             ChatMsg obcm = new ChatMsg(userName, "100", ""); // gameRoom 입장 시도
             SendObject(obcm);
         } catch (NumberFormatException | IOException error) {
-            // TODO Auto-generated catch block
-            //error.printStackTrace();
             JOptionPane.showMessageDialog(null, "Server Can't connect");
         }
     }
 
     public void run() {
-
         while (true) {
             System.out.println("메시지 대기중...");
             try {
@@ -61,20 +56,58 @@ public class ListenNetwork extends Thread {
                 //MovingInfo mi = null;
                 try {
                     obcm = ois.readObject();
-//					System.out.println("obcm read success");
                 } catch (ClassNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                     break;
                 }
                 if (obcm == null) {
-//					System.out.println("obcm is null!");
                     break;
                 }
                 if (obcm instanceof ChatMsg) {
                     cm = (ChatMsg) obcm;
                     msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
                     System.out.println(msg);
+                }
+                if(cm != null) {
+                    switch (cm.getCode()) {
+                        case "100": // 서버 접속 결과 - allow,deny
+                            System.out.println(cm.getData());
+                            String loginResult = cm.getData().split(" ")[0];
+                            System.out.println("loginResult = " + loginResult);
+                            if (loginResult.equals(ALLOW_LOGIN_MSG)) {
+                                GameClientFrame.isWaitScreen = true;
+                                switch (cm.getData().split(" ")[1]) {
+                                    case "1":
+                                        if (playerCharacter == 0) // 처음 입장한 플레이어인 경우
+                                            playerCharacter = 1;
+                                        GameClientFrame.waitingPlayerNum = 1;
+                                        GameClientFrame.playerNames.add(userName);
+                                        break;
+                                    case "2":
+                                        String[] playerNames = cm.getData().split(" ")[2].split("//");
+                                        if (playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
+                                            playerCharacter = 2;
+                                            for (int i = 0; i < playerNames.length; i++)
+                                                GameClientFrame.playerNames.add(playerNames[i]);
+                                        } else { // 대기하고 있던 플레이어인 경우
+                                            GameClientFrame.playerNames.add(playerNames[1]);
+                                        }
+                                        GameClientFrame.waitingPlayerNum = 2;
+                                        break;
+                                }
+
+                                System.out.println(userName + " : " + playerCharacter + "번 캐릭터");
+                                GameClientFrame.userNum = playerCharacter;
+
+                                GameClientFrame.isChanged = true; // 화면 변화가 필요함
+                                GameClientFrame.isWaitScreen = true; // 게임 대기화면으로 변화
+                            } else if (loginResult.equals(DENY_LOGIN_MSG)) {
+                                GameClientFrame.isWaitScreen = false;
+                                JOptionPane.showMessageDialog(null, "해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
+                                return;
+                            }
+                            break;
+                    }
                 }
             } catch (IOException e) {
                 try {
@@ -94,7 +127,7 @@ public class ListenNetwork extends Thread {
     }
 
     public void exitRoom() {
-        ChatMsg obcm = new ChatMsg(this.userName, roomId, "999");
+        ChatMsg obcm = new ChatMsg(this.userName, "999");
         System.out.println(obcm.getUserName() + ", " + obcm.getCode() + ", " + obcm.getData());
         SendObject(obcm);
         try {

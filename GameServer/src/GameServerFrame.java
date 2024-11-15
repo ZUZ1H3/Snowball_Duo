@@ -241,7 +241,6 @@ public class GameServerFrame extends JFrame {
             try {
                 bb = msg.getBytes("euc-kr");
             } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             for (i = 0; i < bb.length; i++)
@@ -264,7 +263,6 @@ public class GameServerFrame extends JFrame {
                     ois = null;
                     oos = null;
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
                 Logout(); // 에러가난 현재 객체를 벡터에서 지운다

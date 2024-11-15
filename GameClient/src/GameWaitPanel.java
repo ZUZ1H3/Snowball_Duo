@@ -12,50 +12,40 @@ public class GameWaitPanel extends JPanel {
 
     private ImageIcon penguinImage = new ImageIcon("GameClient/image/penguin_medium.png");
     private ImageIcon sealImage = new ImageIcon("GameClient/image/seal_medium.png");
-    private ImageIcon loadingImage = new ImageIcon("GameClient/image/loading.png");
-    private ImageIcon loading1Image = new ImageIcon("GameClient/image/loading1.png");
-    private ImageIcon loading2Image = new ImageIcon("GameClient/image/loading2.png");
-    private ImageIcon loading3Image = new ImageIcon("GameClient/image/loading3.png");
-    private ImageIcon player1Image = new ImageIcon("GameClient/image/1.png");
-    private ImageIcon player2Image = new ImageIcon("GameClient/image/2.png");
-
+    private ImageIcon[] loadingImage = {
+            new ImageIcon("GameClient/image/loading.png"),
+            new ImageIcon("GameClient/image/loading1.png"),
+            new ImageIcon("GameClient/image/loading2.png"),
+            new ImageIcon("GameClient/image/loading3.png")
+    };
+    private ImageIcon playerImage = new ImageIcon("GameClient/image/1.png");
     private JLabel penguinLabel = new JLabel(penguinImage);
     private JLabel sealLabel = new JLabel(sealImage);
-    private JLabel loadingLabel = new JLabel(loadingImage);
-    private JLabel playerLabel = new JLabel(player1Image);
+    private JLabel loadingLabel = new JLabel(loadingImage[0]);
+    private JLabel playerLabel = new JLabel(playerImage);
 
     private Timer jumpTimer, loadingTimer;
-    private int penguinJumpDirection = 1; // 1이면 올라가고 -1이면 내려감
-    private int sealJumpDirection = -1; // 1이면 올라가고 -1이면 내려감
-    private int penguinJumpHeight = 0; // 펭귄의 현재 점프 높이
-    private int sealJumpHeight = 20; // 물범의 현재 점프 높이
+    private int penguinJumpHeight = 0, sealJumpHeight = 20;
+    private int penguinJumpDirection = 1, sealJumpDirection = -1;
     private final int MAX_JUMP_HEIGHT = 20; // 최대 점프 높이
 
     public GameWaitPanel(GameClientFrame frame) {
         setLayout(null);
 
         add(backButton);
-        // 펭귄 이미지
-        penguinLabel.setIcon(penguinImage);
-        penguinLabel.setBounds(425, 197, 80, 80);  // 위치와 크기 설정
         add(penguinLabel);
-
-        // 물범 이미지
-        sealLabel.setIcon(sealImage);
-        sealLabel.setBounds(505, 186, 70, 70);  // 위치와 크기 설정
         add(sealLabel);
-
-        loadingLabel.setIcon(loading1Image);
-        loadingLabel.setBounds(434, 282, loading1Image.getIconWidth(), loading1Image.getIconHeight());  // 위치와 크기 설정
         add(loadingLabel);
+
+        penguinLabel.setBounds(425, 197, 80, 80);
+        sealLabel.setBounds(505, 186, 70, 70);
+        loadingLabel.setBounds(434, 282, loadingImage[1].getIconWidth(), loadingImage[1].getIconHeight());  // 위치와 크기 설정
 
         startJumpTimer();
         startLoadingTimer();
 
-        // back 버튼 클릭 리스너 추가
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
                 GameClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
                 frame.selectScreen();  // 화면 전환 메서드 호출
             }
@@ -77,22 +67,10 @@ public class GameWaitPanel extends JPanel {
         loadingTimer.start();
     }
 
-    // 로딩 아이콘을 순차적으로 변경하는 메서드
     private void changeLoadingIcon() {
-        // 현재 로딩 아이콘을 변경
-        if (loadingLabel.getIcon() == loading1Image) {
-            loadingLabel.setIcon(loading2Image);
-            loadingLabel.setBounds(434, 282, loading2Image.getIconWidth(), loading2Image.getIconHeight());
-        } else if (loadingLabel.getIcon() == loading2Image) {
-            loadingLabel.setIcon(loading3Image);
-            loadingLabel.setBounds(434, 282, loading3Image.getIconWidth(), loading3Image.getIconHeight());
-        } else if (loadingLabel.getIcon() == loading3Image) {
-            loadingLabel.setIcon(loadingImage);
-            loadingLabel.setBounds(434, 282, loadingImage.getIconWidth(), loadingImage.getIconHeight());
-        } else {
-            loadingLabel.setIcon(loading1Image);
-            loadingLabel.setBounds(434, 282, loading1Image.getIconWidth(), loading1Image.getIconHeight());
-        }
+        int currentIconIndex = (java.util.Arrays.asList(loadingImage).indexOf(loadingLabel.getIcon()) + 1) % loadingImage.length;
+        loadingLabel.setIcon(loadingImage[currentIconIndex]);
+        loadingLabel.setBounds(434, 282, loadingImage[currentIconIndex].getIconWidth(), loadingImage[currentIconIndex].getIconHeight());
     }
 
     // 타이머를 시작하여 1초마다 펭귄과 물범의 y 좌표를 변경
@@ -133,19 +111,19 @@ public class GameWaitPanel extends JPanel {
         sealLabel.setBounds(506, 207 - sealJumpHeight, 70, 70);
     }
 
-    /*public void changePlayerNum(int waitingPlayerNum) { // 참여한 플레이어 수 이미지 변경
+    public void changePlayerNum(int waitingPlayerNum) { // 참여한 플레이어 수 이미지 변경
         switch (waitingPlayerNum) {
             case 1: {
-                waitPlayerIcon = new ImageIcon(new ImageIcon(oneImgPath).getImage().getScaledInstance(waitPlayerLabel.getWidth(), waitPlayerLabel.getHeight(), Image.SCALE_SMOOTH));
+                playerImage = new ImageIcon(new ImageIcon("GameClient/image/1.png").getImage().getScaledInstance(playerLabel.getWidth(), playerLabel.getHeight(), Image.SCALE_SMOOTH));
                 break;
             }
             case 2:
-                waitPlayerIcon = new ImageIcon(new ImageIcon(twoImgPath).getImage().getScaledInstance(waitPlayerLabel.getWidth(), waitPlayerLabel.getHeight(), Image.SCALE_SMOOTH));
+                playerImage = new ImageIcon(new ImageIcon("GameClient/image/2.png").getImage().getScaledInstance(playerLabel.getWidth(), playerLabel.getHeight(), Image.SCALE_SMOOTH));
                 break;
         }
-        waitPlayerLabel.setIcon(waitPlayerIcon);
-        add(waitPlayerLabel);
-    }*/
+        playerLabel.setIcon(playerImage);
+        add(playerLabel);
+    }
 
     // 기본 이미지를 BufferedImage로 변환
     private BufferedImage applyColorFilter(ImageIcon icon, Color filterColor) {
@@ -177,6 +155,5 @@ public class GameWaitPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-
     }
 }
