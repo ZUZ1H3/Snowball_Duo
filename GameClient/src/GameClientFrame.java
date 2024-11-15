@@ -4,7 +4,8 @@ import java.awt.*;
 public class GameClientFrame extends JFrame {
 
     public static boolean isGameMainScreen, isGameStartScreen, isGameRulesScreen;  // 게임 규칙 화면 상태
-
+    public static ListenNetwork net = null;
+    public static String userName;
     public GameClientFrame() {
         setTitle("Snowball Duo - Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,5 +40,10 @@ public class GameClientFrame extends JFrame {
         }
         revalidate();
         repaint();
+    }
+
+    public static void interruptNet() {
+        net.interrupt();
+        System.out.println("interrupt");
     }
 }

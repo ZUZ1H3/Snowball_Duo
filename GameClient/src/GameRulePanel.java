@@ -52,7 +52,7 @@ public class GameRulePanel extends JPanel {
             }
 
             public void mouseExited(MouseEvent e) {
-                backButton.setIcon(backHoverImage);
+                backButton.setIcon(backImage);
             }
         });
     }
