@@ -1,21 +1,26 @@
 import javax.swing.border.EmptyBorder;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 
 public class GameServerFrame extends JFrame {
+    private Image backgroundImage = new ImageIcon("GameClient/image/background_mini.png").getImage();
+    private ImageIcon portImage = new ImageIcon("GameClient/image/port.png");
+    private ImageIcon serverStartImage = new ImageIcon("GameClient/image/server_start.png");
+    private ImageIcon serverRunningImage = new ImageIcon("GameClient/image/server_running.png");
+    private JButton serverStartButton = new JButton(serverStartImage);
+
     private static final long serialVersionUID = 1L;
     private int port;
     private JPanel contentPane;
     JTextArea textArea;
     private JTextField txtPortNumber;
-
     private ServerSocket socket; // 서버소켓
     private Socket client_socket; // accept() 에서 생성된 client 소켓
 
@@ -29,42 +34,65 @@ public class GameServerFrame extends JFrame {
         this.port = port;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setSize(338, 440);
-        contentPane = new JPanel();
+
+        //전체
+        contentPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
+        contentPane.setPreferredSize(new Dimension(360, 450));
+        pack();
 
+        //스크롤팬
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(12, 10, 300, 298);
+        scrollPane.setBounds(10, 56, 340, 370);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
         contentPane.add(scrollPane);
 
+        //port
+        JLabel lblNewLabel = new JLabel(portImage);
+        lblNewLabel.setBounds(18, 23, 47, 15);
+        contentPane.add(lblNewLabel);
+
+        //메시지 뜨는 곳
         textArea = new JTextArea();
         textArea.setEditable(false);
+        textArea.setOpaque(false);
+        textArea.setForeground(Color.WHITE);
         scrollPane.setViewportView(textArea);
-
-        JLabel lblNewLabel = new JLabel("Port Number");
-        lblNewLabel.setBounds(13, 318, 87, 26);
-        contentPane.add(lblNewLabel);
 
         txtPortNumber = new JTextField();
         txtPortNumber.setEditable(false);
-        txtPortNumber.setHorizontalAlignment(SwingConstants.CENTER);
         txtPortNumber.setText(Integer.toString(port));
-        txtPortNumber.setBounds(112, 318, 199, 26);
+        txtPortNumber.setBackground(new Color(0, 0, 0, 0)); // 투명 배경 설정
+        txtPortNumber.setForeground(Color.WHITE); // 텍스트 색을 하얀색으로 설정
+        txtPortNumber.setBounds(73, 23, 43, 20);
         contentPane.add(txtPortNumber);
         txtPortNumber.setColumns(10);
+        txtPortNumber.setBorder(null); // 테두리 제거
+        txtPortNumber.setFont(new Font("Arial", Font.PLAIN, 16)); // 텍스트 크기 설정
 
-        JButton btnServerStart = new JButton("Server Start");
-        btnServerStart.addActionListener(new ActionListener() {
+        contentPane.add(serverStartButton);
+        serverStartButton.setBounds(237, 21, 109, 15);
+        serverStartButton.setBorderPainted(false);
+        serverStartButton.setContentAreaFilled(false);  // 배경 없애기
+        serverStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     socket = new ServerSocket(port);
                 } catch (NumberFormatException | IOException e1) {
                     e1.printStackTrace();
                 }
-                btnServerStart.setText("Chat Server Running..");
-                btnServerStart.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
+                serverStartButton.setIcon(serverRunningImage);
+                serverStartButton.setBounds(195, 21, 154, 18);
+                serverStartButton.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
                 txtPortNumber.setEnabled(false); // 더이상 포트번호 수정 못하게 막는다
 
                 gameRoom = new GameRoom(socket); //단일 서버
@@ -73,8 +101,7 @@ public class GameServerFrame extends JFrame {
                 accept_server.start();
             }
         });
-        btnServerStart.setBounds(12, 356, 300, 35);
-        contentPane.add(btnServerStart);
+
         setVisible(true);
     }
 
