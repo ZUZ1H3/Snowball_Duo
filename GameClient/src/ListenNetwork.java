@@ -77,12 +77,14 @@ public class ListenNetwork extends Thread {
                 if (cm != null) {
                     switch (cm.getCode()) {
                         case "100": // 서버 접속 결과 - allow,deny
-                            System.out.println(cm.getData());
+                            //System.out.println(cm.getData()+" 데이터입니다");
                             String loginResult = cm.getData().split(" ")[0];
-                            System.out.println("loginResult = " + loginResult);
+                            System.out.println("loginResult = " + loginResult + "로그인 성공 여부");
                             if (loginResult.equals(ALLOW_LOGIN_MSG)) {
                                 GameClientFrame.isGameScreen = true;
                                 //isLogin = true;
+                                System.out.println(cm.getData()+"1번 입니다능");
+
                                 switch (cm.getData().split(" ")[1]) {
                                     case "1":
                                         if (playerCharacter == 0) // 처음 입장한 플레이어인 경우
@@ -91,6 +93,7 @@ public class ListenNetwork extends Thread {
                                         GameClientFrame.playerNames.add(userName);
                                         break;
                                     case "2":
+                                        System.out.println(cm.getData()+"2번 입니다능");
                                         String[] playerNames = cm.getData().split(" ")[2].split("//");
                                         if (playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
                                             playerCharacter = 2;

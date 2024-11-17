@@ -360,7 +360,7 @@ public class GameServerFrame extends JFrame {
                                         WriteAllObject(obcm);
                                         break;
                                     case 2:
-                                        obcm = new ChatMsg("SERVER", "100", ALLOW_LOGIN_MSG + " " + waitingPlayerNum + " ");
+                                        obcm = new ChatMsg("SERVER", "100", ALLOW_LOGIN_MSG + " " + waitingPlayerNum + " " + getUserNames());
                                         WriteAllObject(obcm);
                                         break;
                                 }
@@ -411,5 +411,10 @@ public class GameServerFrame extends JFrame {
                 } // 바깥 catch문끝
             } // while
         } // run
+    }
+
+    public String getUserNames() {
+        Vector userNames = gameRoom.getUserNameVec();
+        return userNames.get(0)+"//"+userNames.get(1);
     }
 }
