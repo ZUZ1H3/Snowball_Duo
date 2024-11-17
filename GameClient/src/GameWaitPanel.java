@@ -7,8 +7,8 @@ import java.awt.image.BufferedImage;
 public class GameWaitPanel extends JPanel {
     private Image backgroundImage = new ImageIcon("GameClient/image/background_dark.png").getImage();
     private ImageIcon backImage = new ImageIcon("GameClient/image/back.png");
-    private JButton backButton = createImageButton(backImage, 39, 45, 43, 30);
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
+    private ImageIcon startImage = new ImageIcon("GameClient/image/start.png");
 
     private ImageIcon penguinImage = new ImageIcon("GameClient/image/penguin_medium.png");
     private ImageIcon sealImage = new ImageIcon("GameClient/image/seal_medium.png");
@@ -25,6 +25,11 @@ public class GameWaitPanel extends JPanel {
     private JLabel sealLabel = new JLabel(sealImage);
     private JLabel loadingLabel = new JLabel(loadingImage[0]);
     private JLabel playerLabel = new JLabel(player1Image);
+
+
+    private JButton backButton = createImageButton(backImage, 39, 45, 43, 30);
+    private JButton startButton = createImageButton(startImage, 445, 417, 110, 29);
+    private ImageIcon startHoverImage = new ImageIcon(applyColorFilter(startImage, Color.decode("#B4FDFF")));
 
     private Timer jumpTimer, loadingTimer;
     private int penguinJumpHeight = 0, sealJumpHeight = 20;
@@ -49,7 +54,7 @@ public class GameWaitPanel extends JPanel {
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 GameClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
-                frame.selectScreen();  // 화면 전환 메서드 호출
+                frame.updateScreen();  // 화면 전환 메서드 호출
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -114,28 +119,52 @@ public class GameWaitPanel extends JPanel {
         penguinLabel.setBounds(426, 197 - penguinJumpHeight, 80, 80);
         sealLabel.setBounds(506, 207 - sealJumpHeight, 70, 70);
     }
+
     public void changeWaitPlayerNum() {
         changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
         if (GameClientFrame.waitingPlayerNum == 2) {
-            //addGameStartBtn();
+            addGameStartBtn();
         }
         this.repaint();
     }
+
     public void changePlayerNum(int waitingPlayerNum) { // 참여한 플레이어 수 이미지 변경
         switch (waitingPlayerNum) {
             case 1: {
                 playerLabel.setIcon(player1Image);
-                playerLabel.setBounds(467, 333, 84, 25);
+                playerLabel.setBounds(467, 333, 82, 19);
                 add(playerLabel);
                 break;
             }
             case 2:
                 playerLabel.setIcon(player2Image);
-                playerLabel.setBounds(467, 333, 84, 25);
+                playerLabel.setBounds(467, 333, 82, 19);
                 add(playerLabel);
                 break;
         }
         repaint();
+    }
+
+    public void addGameStartBtn() {
+        if (GameClientFrame.userNum == 1) {
+            startButton.addMouseListener(new MouseAdapter() { // game start 버튼 눌렀을 때 동작
+                public void mousePressed(MouseEvent e) {
+                    ChatMsg obcm = new ChatMsg(GameClientFrame.userName, "300", "★Game Start!★"); // gameRoom 입장 시도
+                    ListenNetwork.SendObject(obcm);
+                    startButton.setEnabled(false);
+                }
+
+                public void mouseEntered(MouseEvent e) {
+                    startButton.setIcon(startHoverImage);
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    startButton.setIcon(startImage);
+                }
+
+            });
+            add(startButton);
+        }
     }
 
     // 기본 이미지를 BufferedImage로 변환

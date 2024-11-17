@@ -83,7 +83,7 @@ public class ListenNetwork extends Thread {
                             if (loginResult.equals(ALLOW_LOGIN_MSG)) {
                                 GameClientFrame.isGameScreen = true;
                                 //isLogin = true;
-                                System.out.println(cm.getData()+"1번 입니다능");
+                                System.out.println(cm.getData());
 
                                 switch (cm.getData().split(" ")[1]) {
                                     case "1":
@@ -93,7 +93,6 @@ public class ListenNetwork extends Thread {
                                         GameClientFrame.playerNames.add(userName);
                                         break;
                                     case "2":
-                                        System.out.println(cm.getData()+"2번 입니다능");
                                         String[] playerNames = cm.getData().split(" ")[2].split("//");
                                         if (playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
                                             playerCharacter = 2;
@@ -112,9 +111,19 @@ public class ListenNetwork extends Thread {
                                 GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
                             } else if (loginResult.equals(DENY_LOGIN_MSG)) {
                                 GameClientFrame.isGameScreen = false;
-                                JOptionPane.showMessageDialog(null, "해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
+                                JOptionPane.showMessageDialog(null, "서버 인원 초과");
                                 return;
                             }
+                            break;
+
+                        case "200":
+                            //ChattingPanel.appendText(cm.getUserName(), cm.getData());
+                            break;
+                        case "300": //게임 스타트
+                            GameClientFrame.isWaitScreen = false;
+                            GameClientFrame.isChanged = true;
+                            GameClientFrame.isPlayingScreen = true;
+                            isPlayingGame = true;
                             break;
                     }
                 }

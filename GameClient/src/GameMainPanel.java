@@ -31,7 +31,7 @@ public class GameMainPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 GameClientFrame.isGameStartScreen = true; // 게임 시작 화면으로 상태 변경
-                frame.selectScreen(); // 화면 전환 메서드 호출
+                frame.updateScreen(); // 화면 전환 메서드 호출
             }
 
             public void mouseEntered(MouseEvent e){
@@ -47,7 +47,7 @@ public class GameMainPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 GameClientFrame.isGameRulesScreen = true;  // 게임 규칙 화면으로 상태 변경
-                frame.selectScreen();  // 화면 전환 메서드 호출
+                frame.updateScreen();  // 화면 전환 메서드 호출
             }
 
             public void mouseEntered(MouseEvent e){

@@ -23,7 +23,7 @@ public class GameScreenPanel extends JPanel {
     public void changeWaitPlayerNum() {
         gameWaitPanel.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
         if (GameClientFrame.waitingPlayerNum == 2) {
-            //gameWaitPanel.addGameStartBtn();
+            gameWaitPanel.addGameStartBtn();
         }
         repaint();
     }
