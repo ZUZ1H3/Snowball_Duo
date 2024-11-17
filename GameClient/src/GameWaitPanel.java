@@ -18,11 +18,13 @@ public class GameWaitPanel extends JPanel {
             new ImageIcon("GameClient/image/loading2.png"),
             new ImageIcon("GameClient/image/loading3.png")
     };
-    private ImageIcon playerImage = new ImageIcon("GameClient/image/1.png");
+    private ImageIcon player1Image = new ImageIcon("GameClient/image/1.png");
+    private ImageIcon player2Image = new ImageIcon("GameClient/image/2.png");
+
     private JLabel penguinLabel = new JLabel(penguinImage);
     private JLabel sealLabel = new JLabel(sealImage);
     private JLabel loadingLabel = new JLabel(loadingImage[0]);
-    private JLabel playerLabel = new JLabel(playerImage);
+    private JLabel playerLabel = new JLabel(player1Image);
 
     private Timer jumpTimer, loadingTimer;
     private int penguinJumpHeight = 0, sealJumpHeight = 20;
@@ -36,13 +38,13 @@ public class GameWaitPanel extends JPanel {
         add(penguinLabel);
         add(sealLabel);
         add(loadingLabel);
-
+        changeWaitPlayerNum();
         penguinLabel.setBounds(425, 197, 80, 80);
         sealLabel.setBounds(505, 186, 70, 70);
         loadingLabel.setBounds(434, 282, loadingImage[1].getIconWidth(), loadingImage[1].getIconHeight());  // 위치와 크기 설정
-
         startJumpTimer();
         startLoadingTimer();
+        changePlayerNum(GameClientFrame.waitingPlayerNum);
 
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -61,11 +63,13 @@ public class GameWaitPanel extends JPanel {
 
     }
 
+
     // 로딩 아이콘을 1초마다 변경하는 타이머
     private void startLoadingTimer() {
         loadingTimer = new Timer(500, e -> changeLoadingIcon());
         loadingTimer.start();
     }
+
 
     private void changeLoadingIcon() {
         int currentIconIndex = (java.util.Arrays.asList(loadingImage).indexOf(loadingLabel.getIcon()) + 1) % loadingImage.length;
@@ -110,19 +114,28 @@ public class GameWaitPanel extends JPanel {
         penguinLabel.setBounds(426, 197 - penguinJumpHeight, 80, 80);
         sealLabel.setBounds(506, 207 - sealJumpHeight, 70, 70);
     }
-
+    public void changeWaitPlayerNum() {
+        changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+        if (GameClientFrame.waitingPlayerNum == 2) {
+            //addGameStartBtn();
+        }
+        this.repaint();
+    }
     public void changePlayerNum(int waitingPlayerNum) { // 참여한 플레이어 수 이미지 변경
         switch (waitingPlayerNum) {
             case 1: {
-                playerImage = new ImageIcon(new ImageIcon("GameClient/image/1.png").getImage().getScaledInstance(playerLabel.getWidth(), playerLabel.getHeight(), Image.SCALE_SMOOTH));
+                playerLabel.setIcon(player1Image);
+                playerLabel.setBounds(467, 333, 84, 25);
+                add(playerLabel);
                 break;
             }
             case 2:
-                playerImage = new ImageIcon(new ImageIcon("GameClient/image/2.png").getImage().getScaledInstance(playerLabel.getWidth(), playerLabel.getHeight(), Image.SCALE_SMOOTH));
+                playerLabel.setIcon(player2Image);
+                playerLabel.setBounds(467, 333, 84, 25);
+                add(playerLabel);
                 break;
         }
-        playerLabel.setIcon(playerImage);
-        add(playerLabel);
+        repaint();
     }
 
     // 기본 이미지를 BufferedImage로 변환

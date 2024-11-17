@@ -237,7 +237,6 @@ public class GameServerFrame extends JFrame {
             }
         }
 
-
         // 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
         public void WriteOthers(String str) {
             for (int i = 0; i < user_vc.size(); i++) {
@@ -319,7 +318,6 @@ public class GameServerFrame extends JFrame {
         public void run() {
             while (true) { // 사용자 접속을 계속해서 받기 위해 while문
                 try {
-
                     Object obcm = null;
                     String msg = null;
                     ChatMsg cm = null;

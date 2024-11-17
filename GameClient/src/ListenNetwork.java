@@ -56,26 +56,33 @@ public class ListenNetwork extends Thread {
                 //MovingInfo mi = null;
                 try {
                     obcm = ois.readObject();
+                    System.out.println("obcm read success");
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                     break;
                 }
                 if (obcm == null) {
+                    System.out.println("obcm is null!");
                     break;
                 }
                 if (obcm instanceof ChatMsg) {
                     cm = (ChatMsg) obcm;
                     msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
                     System.out.println(msg);
-                }
-                if(cm != null) {
+                }/*else if (obcm instanceof MovingInfo) {
+//					System.out.println("obcm을 제대로 받음");
+                    mi = (MovingInfo) obcm;
+                }*/ else
+                    continue;
+                if (cm != null) {
                     switch (cm.getCode()) {
                         case "100": // 서버 접속 결과 - allow,deny
                             System.out.println(cm.getData());
                             String loginResult = cm.getData().split(" ")[0];
                             System.out.println("loginResult = " + loginResult);
                             if (loginResult.equals(ALLOW_LOGIN_MSG)) {
-                                GameClientFrame.isWaitScreen = true;
+                                GameClientFrame.isGameScreen = true;
+                                //isLogin = true;
                                 switch (cm.getData().split(" ")[1]) {
                                     case "1":
                                         if (playerCharacter == 0) // 처음 입장한 플레이어인 경우
@@ -98,11 +105,10 @@ public class ListenNetwork extends Thread {
 
                                 System.out.println(userName + " : " + playerCharacter + "번 캐릭터");
                                 GameClientFrame.userNum = playerCharacter;
-
                                 GameClientFrame.isChanged = true; // 화면 변화가 필요함
-                                GameClientFrame.isWaitScreen = true; // 게임 대기화면으로 변화
+                                GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
                             } else if (loginResult.equals(DENY_LOGIN_MSG)) {
-                                GameClientFrame.isWaitScreen = false;
+                                GameClientFrame.isGameScreen = false;
                                 JOptionPane.showMessageDialog(null, "해당 서버는 가득 찼습니다. 다른 서버를 선택해주세요.");
                                 return;
                             }

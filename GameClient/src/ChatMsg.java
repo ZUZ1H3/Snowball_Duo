@@ -11,10 +11,10 @@ class ChatMsg implements Serializable {
     private String objType;
     public ImageIcon img;
 
-    public ChatMsg(String UserName, String code, String msg) {
+    public ChatMsg(String UserName, String code, String data) {
         this.UserName = UserName;
         this.code = code;
-        this.data = msg;
+        this.data = data;
     }
 
     @Override
