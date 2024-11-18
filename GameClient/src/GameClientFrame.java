@@ -20,7 +20,7 @@ public class GameClientFrame extends JFrame {
 //        ChatPanel mainPanel = new ChatPanel("this");
 //        mainPanel.setPreferredSize(new Dimension(200, 600));
 
-        GameMainPanel mainPanel = new GameMainPanel(this);
+        GamePlayPanel mainPanel = new GamePlayPanel();
         mainPanel.setPreferredSize(new Dimension(1000, 600));
         setContentPane(mainPanel);
         pack();
