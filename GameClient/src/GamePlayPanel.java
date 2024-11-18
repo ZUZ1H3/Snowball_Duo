@@ -1,63 +1,65 @@
 import javax.swing.*;
-
 import Map.Block;
-
 import java.awt.*;
 import java.util.ArrayList;
 
 public class GamePlayPanel extends JPanel {
-    private final int WIDTH = 780;
-    private final int HEIGHT = 580;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 600;
 
     private Map map;
     private ArrayList<Block> blocks = null;
 
-    int myWidth, myHeight;
-    int opponenetWidth, opponentHeight;
-
     Toolkit imageTool = Toolkit.getDefaultToolkit();
-
-    Image mapImg = imageTool.getImage("image/background/background_ingame.png");
-
-    // 이미지 버퍼
-    Image buffImg;
-    Graphics buffG;
-
-    public void settingMap() {
-        //맵을 여러개 만들거면 switch문이나 if문을 써서 주소를 바꿔주면 됨
-        String mapPath = "src/resouce/map.txt";
-
-        map = new Map(mapPath);
-        blocks = map.getBlocks();
-    }
-
-    public void systeminit() {//프로그램 초기화
-        //맵 설정
-        settingMap();
-    }
+    Image mapImg = imageTool.getImage("GameClient/image/background/background_ingame.png");
 
     public GamePlayPanel() {
-        setSize(WIDTH, HEIGHT);
-
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
         systeminit();
     }
 
-    public void paint(Graphics g) {
-        buffImg = createImage(getWidth(),getHeight()); // 버퍼링용 이미지 ( 도화지 )
-        buffG = buffImg.getGraphics(); // 버퍼링용 이미지에 그래픽 객체를 얻어야 그릴 수 있다고 한다. ( 붓? )
+    public void settingMap() {
+        String mapPath = "GameClient/src/resource/map.txt";
+        map = new Map(mapPath);
+        blocks = map.getBlocks();
 
-        update(g);
+        if (blocks != null) {
+            System.out.println("Blocks initialized. Count: " + blocks.size());
+            for (Block block : blocks) {
+                System.out.println("Block X: " + block.getX() + ", Y: " + block.getY());
+                System.out.println("Block Image: " + block.getBlockImage());
+            }
+        } else {
+            System.out.println("Blocks are null!");
+        }
     }
 
-    public void update(Graphics g) {
-        buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
-        buffG.drawImage(mapImg,0,0, this);
+    public void systeminit() {
+        settingMap();
+    }
 
-        for (Block block : blocks)
-            buffG.drawImage(block.getImg(),block.getX(),block.getY(),this);
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
-        repaint();
+        int xOffset = 10; // 오른쪽으로 10 픽셀 이동
+        int yOffset = 10;  // 아래로 10 픽셀 이동
+
+        // 배경 이미지 그리기
+        if (mapImg != null) {
+            g.drawImage(mapImg, 0, 0, WIDTH, HEIGHT, this);
+        }
+
+        // 블록 그리기
+        if (blocks != null) {
+            for (Block block : blocks) {
+                if (block.getBlockImage() != null) {
+                    g.drawImage(block.getBlockImage(), block.getX() + xOffset, block.getY() + yOffset, this);
+                } else {
+                    System.out.println("Block image is null at X: " + block.getX() + ", Y: " + block.getY());
+                }
+            }
+        }
     }
 
 }

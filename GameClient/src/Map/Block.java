@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Block {
-    Image blockImage = new ImageIcon("image/map/block").getImage();
+    Image blockImage = new ImageIcon("GameClient/image/map/block.png").getImage();
     Rectangle rectBlock;
     int x, y, width, height;
 
