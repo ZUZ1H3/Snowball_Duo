@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class GameMainPanel extends JPanel {
-    private Image backgroundImage = new ImageIcon("GameClient/image/background.png").getImage();
+    private Image backgroundImage = new ImageIcon("GameClient/image/background/background.png").getImage();
     private Image titleImage = new ImageIcon("GameClient/image/title.png").getImage();
     private Image penguinImage = new ImageIcon("GameClient/image/penguin_big.png").getImage();
     private Image sealImage = new ImageIcon("GameClient/image/seal_big.png").getImage();

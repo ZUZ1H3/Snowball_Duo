@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class GameWaitPanel extends JPanel {
-    private Image backgroundImage = new ImageIcon("GameClient/image/background_dark.png").getImage();
+    private Image backgroundImage = new ImageIcon("GameClient/image/background/background_dark.png").getImage();
     private ImageIcon backImage = new ImageIcon("GameClient/image/back.png");
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
     private ImageIcon startImage = new ImageIcon("GameClient/image/start.png");

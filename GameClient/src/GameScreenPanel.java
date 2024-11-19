@@ -7,7 +7,8 @@ public class GameScreenPanel extends JPanel {
 
     public GameWaitPanel gameWaitPanel;
     private GamePlayPanel gamePlayPanel = null;
-    private ChatPanel gameInfoPane;
+    private ChatPanel chatPanel;
+
     public GameScreenPanel(GameClientFrame gameClientFrame, String userName) {
         setLayout(null);
         setSize(1000, 600);
@@ -16,11 +17,12 @@ public class GameScreenPanel extends JPanel {
         gameWaitPanel = new GameWaitPanel(gameClientFrame);
         gameWaitPanel.setBounds(0, 0, 1000, 600); // 위치 및 크기 설정
 
-
         add(gameWaitPanel);
         changeWaitPlayerNum();
 
         gameWaitPanel.setBackground(Color.BLACK);
+        chatPanel = new ChatPanel(userName);
+
     }
 
     public void changeWaitPlayerNum() {
@@ -30,11 +32,12 @@ public class GameScreenPanel extends JPanel {
         }
         repaint();
     }
+
     public void changeToPlaypanel() {
         remove(gameWaitPanel);
-        if(gameWaitPanel == null) {
+        if (gamePlayPanel == null) {
             gamePlayPanel = new GamePlayPanel();
-            gamePlayPanel.setBounds(0, 0, gamePlayPanel.getWidth(), gamePlayPanel.getHeight());
+            gamePlayPanel.setBounds(0, 0, 800, 600);
             add(gamePlayPanel);
             //addKeyListener(gamePlayPanel.testKey);
             gamePlayPanel.addMouseListener(new MouseAdapter() {
@@ -45,10 +48,12 @@ public class GameScreenPanel extends JPanel {
                     setFocusable(true);
                 }
             });
+            chatPanel.setBounds(800, 0, 200, 600);
+            chatPanel.changePlayerList(GameClientFrame.playerNames);
+            add(chatPanel);
         }
-
-
         this.repaint();
     }
+
 
 }

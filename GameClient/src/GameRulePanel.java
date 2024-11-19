@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class GameRulePanel extends JPanel {
-    private Image gameRuleBackgroundImage = new ImageIcon("GameClient/image/gamerule_background.png").getImage();
+    private Image gameRuleBackgroundImage = new ImageIcon("GameClient/image/background/background_gamerule.png").getImage();
 
     private ImageIcon gameStartImage = new ImageIcon("GameClient/image/game_start.png");
     private ImageIcon backImage = new ImageIcon("GameClient/image/back.png");

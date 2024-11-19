@@ -117,7 +117,7 @@ public class ListenNetwork extends Thread {
                             break;
 
                         case "200":
-                            //ChattingPanel.appendText(cm.getUserName(), cm.getData());
+                            ChatPanel.appendText(cm.getUserName(), cm.getData());
                             break;
                         case "300": //게임 스타트
                             GameClientFrame.isWaitScreen = false;
@@ -163,7 +163,6 @@ public class ListenNetwork extends Thread {
         try {
             oos.writeObject(ob);
         } catch (IOException e) {
-            // textArea.append("메세지 송신 에러!!\n");
         }
     }
 }

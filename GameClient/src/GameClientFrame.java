@@ -17,10 +17,7 @@ public class GameClientFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         init();  // 초기화 메서드 호출
 
-//        ChatPanel mainPanel = new ChatPanel("this");
-//        mainPanel.setPreferredSize(new Dimension(200, 600));
-
-        GamePlayPanel mainPanel = new GamePlayPanel();
+        GameMainPanel mainPanel = new GameMainPanel(this);
         mainPanel.setPreferredSize(new Dimension(1000, 600));
         setContentPane(mainPanel);
         pack();
@@ -77,7 +74,6 @@ public class GameClientFrame extends JFrame {
             }
             else {
                 gameScreenPanel.changeWaitPlayerNum();
-                //gameScreenPanel.changePlayerList();
             }
         }
         else if (isPlayingScreen) {

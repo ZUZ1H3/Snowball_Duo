@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 
 public class GameServerFrame extends JFrame {
-    private Image backgroundImage = new ImageIcon("GameClient/image/background_mini.png").getImage();
+    private Image backgroundImage = new ImageIcon("GameClient/image/background/background_mini.png").getImage();
     private ImageIcon portImage = new ImageIcon("GameClient/image/port.png");
     private ImageIcon serverStartImage = new ImageIcon("GameClient/image/server_start.png");
     private ImageIcon serverRunningImage = new ImageIcon("GameClient/image/server_running.png");
