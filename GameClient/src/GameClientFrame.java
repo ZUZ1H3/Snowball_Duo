@@ -17,8 +17,8 @@ public class GameClientFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         init();  // 초기화 메서드 호출
 
-        GameMainPanel mainPanel = new GameMainPanel(this);
-        mainPanel.setPreferredSize(new Dimension(1000, 600));
+        GameClearPanel mainPanel = new GameClearPanel();
+        mainPanel.setPreferredSize(new Dimension(800, 600));
         setContentPane(mainPanel);
         pack();
         GameThread gameThread = new GameThread();
