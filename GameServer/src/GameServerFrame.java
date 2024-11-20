@@ -7,7 +7,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 
 public class GameServerFrame extends JFrame {
     private Image backgroundImage = new ImageIcon("GameClient/image/background/background_mini.png").getImage();
@@ -29,6 +28,8 @@ public class GameServerFrame extends JFrame {
     private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
     private static final String ALLOW_LOGIN_MSG = "ALLOW";
     private static final String DENY_LOGIN_MSG = "DENY";
+    private Font font_bold = new Font("Galmuri11 Bold", Font.PLAIN, 16);
+    private Font font_regular = new Font("Galmuri9 Regular", Font.PLAIN, 12);
 
     public GameServerFrame(int port) {
         this.port = port;
@@ -66,6 +67,7 @@ public class GameServerFrame extends JFrame {
         textArea.setEditable(false);
         textArea.setOpaque(false);
         textArea.setForeground(Color.WHITE);
+        textArea.setFont(font_regular);
         scrollPane.setViewportView(textArea);
 
         txtPortNumber = new JTextField();
@@ -77,7 +79,7 @@ public class GameServerFrame extends JFrame {
         contentPane.add(txtPortNumber);
         txtPortNumber.setColumns(10);
         txtPortNumber.setBorder(null); // 테두리 제거
-        txtPortNumber.setFont(new Font("Arial", Font.PLAIN, 16)); // 텍스트 크기 설정
+        txtPortNumber.setFont(font_bold); // 텍스트 크기 설정
 
         contentPane.add(serverStartButton);
         serverStartButton.setBounds(237, 21, 109, 15);

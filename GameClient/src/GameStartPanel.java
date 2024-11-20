@@ -19,6 +19,7 @@ public class GameStartPanel extends JPanel {
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
 
     private JTextField nameTextField = new JTextField("");
+    private Font font_regular = new Font("Galmuri9 Regular", Font.PLAIN, 18);
 
     public GameStartPanel(GameClientFrame frame) {
         setLayout(null);
@@ -26,8 +27,9 @@ public class GameStartPanel extends JPanel {
         add(backButton);
 
         nameTextField.setBorder(BorderFactory.createEmptyBorder()); // 테두리 제거
-        nameTextField.setFont(new Font("Malgun Gothic", Font.PLAIN, 18)); // 글씨체와 크기 조정
+        nameTextField.setFont(font_regular); // 글씨체와 크기 조정
         nameTextField.setBounds(448, 202, 210, 30);  // name 위치 및 크기 설정
+
         add(nameTextField);
 
         startButton.addMouseListener(new MouseAdapter() {

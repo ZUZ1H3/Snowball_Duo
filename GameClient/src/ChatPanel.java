@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -20,6 +22,12 @@ public class ChatPanel extends JPanel {
     private JLabel player1Label;
     private JLabel player2Label;
 
+    private JLabel timerLabel; // 스톱워치 라벨
+    private Timer timer;  // 스톱워치 타이머
+    private int seconds = 0; // 경과 시간 (초)
+    private Font font_bold = new Font("Galmuri11 Bold", Font.PLAIN, 40);
+    private Font font_regular12 = new Font("Galmuri9 Regular", Font.PLAIN, 12);
+    private Font font_regular10 = new Font("Galmuri9 Regular", Font.PLAIN, 10);
     public ChatPanel(String name) {
         this.name = name; // 초기화 추가
         setSize(200, 600);
@@ -27,6 +35,8 @@ public class ChatPanel extends JPanel {
         setChatHistory();
         setChatInput();
         setPlayerList();
+        setTimer();
+
         sendBtn.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 String text = chatInput.getText();
@@ -50,7 +60,7 @@ public class ChatPanel extends JPanel {
         chatHistory = new JTextPane();
         chatHistory.setEditable(true);
         chatHistory.setFocusable(false);
-        chatHistory.setFont(new Font("굴림체", Font.BOLD, 10));
+        chatHistory.setFont(font_regular12);
         chatHistoryScroll.setViewportView(chatHistory);
         chatHistory.setBackground(BACKGROUND_COLOR);
     }
@@ -70,14 +80,15 @@ public class ChatPanel extends JPanel {
         chatInput.setBackground(BACKGROUND_COLOR);
 
         chatInput.setBackground(BACKGROUND_COLOR);
-        chatInput.setFont(new Font("굴림체", Font.PLAIN, 12));
+        chatInput.setFont(font_regular12);
         chatInput.setCaretPosition(chatInput.getDocument().getLength());
         chatInputPane.add(chattingInputScroll);
         add(chatInputPane);
 
         sendBtn = new JButton("[ 전송 ]");
-        sendBtn.setBounds(120, 50, 76, 20);
-        chatInput.setFont(new Font("굴림체", Font.PLAIN, 12));
+        sendBtn.setBounds(116, 50, 80, 20);
+        sendBtn.setFont(font_regular10);
+        chatInput.setFont(font_regular12);
         sendBtn.setBorderPainted(false);
         sendBtn.setContentAreaFilled(false);
         sendBtn.setOpaque(false);
@@ -87,14 +98,56 @@ public class ChatPanel extends JPanel {
     public void setPlayerList() {
         playerListLabel.setForeground(Color.WHITE);
         playerListLabel.setBounds(58, 90, 188, 17);
+        playerListLabel.setFont(font_regular12);
         add(playerListLabel);
         penguinLabel.setForeground(Color.WHITE);
         penguinLabel.setBounds(15, 117, 58, 20);
+        penguinLabel.setFont(font_regular12);
         add(penguinLabel);
         sealLabel.setForeground(Color.WHITE);
         sealLabel.setBounds(15, 137, 68, 20);
+        sealLabel.setFont(font_regular12);
         add(sealLabel);
+    }
 
+    public void addPlayerLabel(int idx, String name) {
+        switch (idx) {
+            case 1:
+                if (player1Label == null) {
+                    player1Label = new JLabel(name);
+                    player1Label.setForeground(Color.WHITE);
+                    player1Label.setBounds(56, 117, 161, 20);
+                    player1Label.setFont(font_regular12);
+                    add(player1Label);
+                }
+                break;
+            case 2:
+                player2Label = new JLabel(name);
+                player2Label.setForeground(Color.WHITE);
+                player2Label.setBounds(56, 137, 154, 20);
+                player2Label.setFont(font_regular12);
+                add(player2Label);
+                break;
+        }
+    }
+    public void setTimer() {
+        timerLabel = new JLabel("00:00");
+        timerLabel.setFont(font_bold);
+        timerLabel.setForeground(Color.WHITE);
+        timerLabel.setBounds(42, 33, 120, 53); // 위치 설정
+        add(timerLabel);
+
+        // 타이머 설정
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seconds++;
+                int minute = seconds / 60;
+                int second = seconds % 60;
+                timerLabel.setText(String.format("%02d:%02d", minute, second));
+            }
+        });
+        timer.start(); // 타이머 시작
     }
 
     public void changePlayerList(ArrayList<String> playerNames) {
@@ -109,25 +162,6 @@ public class ChatPanel extends JPanel {
         int len = chatHistory.getDocument().getLength();
         chatHistory.setCaretPosition(len);
         chatHistory.replaceSelection("[" + userName + "]:" + msg + "\n");
-    }
-
-    public void addPlayerLabel(int idx, String name) {
-        switch (idx) {
-            case 1:
-                if (player1Label == null) {
-                    player1Label = new JLabel(name);
-                    player1Label.setForeground(Color.WHITE);
-                    player1Label.setBounds(56, 117, 161, 15);
-                    add(player1Label);
-                }
-                break;
-            case 2:
-                player2Label = new JLabel(name);
-                player2Label.setForeground(Color.WHITE);
-                player2Label.setBounds(56, 137, 154, 15);
-                add(player2Label);
-                break;
-        }
     }
 
     protected void paintComponent(Graphics g) {
