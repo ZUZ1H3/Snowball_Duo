@@ -1,6 +1,6 @@
 import java.net.ServerSocket;
 import java.util.Vector;
-public class GameRoom extends Thread{
+public class Room extends Thread{
     @SuppressWarnings("unchecked")
 
     private ServerSocket socket;
@@ -8,7 +8,7 @@ public class GameRoom extends Thread{
     private Vector UserNameVec; // 참여자 이름 벡터
 
     // 새로운 참가자 accept() 하고 user thread를 새로 생성한다.
-    public GameRoom(ServerSocket socket) {
+    public Room(ServerSocket socket) {
         this.socket = socket;
         UserVec = new Vector();
         UserNameVec = new Vector();

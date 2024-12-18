@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class GameWaitPanel extends JPanel {
+public class WaitingPanel extends JPanel {
     private Image backgroundImage = new ImageIcon("GameClient/image/background/background_dark.png").getImage();
     private ImageIcon backImage = new ImageIcon("GameClient/image/back.png");
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
@@ -36,7 +36,7 @@ public class GameWaitPanel extends JPanel {
     private int penguinJumpDirection = 1, sealJumpDirection = -1;
     private final int MAX_JUMP_HEIGHT = 20; // 최대 점프 높이
 
-    public GameWaitPanel(GameClientFrame frame) {
+    public WaitingPanel(ClientFrame frame) {
         setLayout(null);
 
         add(backButton);
@@ -49,11 +49,11 @@ public class GameWaitPanel extends JPanel {
         loadingLabel.setBounds(434, 282, loadingImage[1].getIconWidth(), loadingImage[1].getIconHeight());  // 위치와 크기 설정
         startJumpTimer();
         startLoadingTimer();
-        changePlayerNum(GameClientFrame.waitingPlayerNum);
+        changePlayerNum(ClientFrame.waitingPlayerNum);
 
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                GameClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
+                ClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
                 frame.updateScreen();  // 화면 전환 메서드 호출
             }
 
@@ -121,8 +121,8 @@ public class GameWaitPanel extends JPanel {
     }
 
     public void changeWaitPlayerNum() {
-        changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
-        if (GameClientFrame.waitingPlayerNum == 2) {
+        changePlayerNum(ClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+        if (ClientFrame.waitingPlayerNum == 2) {
             addGameStartBtn();
         }
         this.repaint();
@@ -146,10 +146,10 @@ public class GameWaitPanel extends JPanel {
     }
 
     public void addGameStartBtn() {
-        if (GameClientFrame.userNum == 1) {
+        if (ClientFrame.userNum == 1) {
             startButton.addMouseListener(new MouseAdapter() { // game start 버튼 눌렀을 때 동작
                 public void mousePressed(MouseEvent e) {
-                    ChatMsg obcm = new ChatMsg(GameClientFrame.userName, "300", "★Game Start!★"); // gameRoom 입장 시도
+                    ChatMsg obcm = new ChatMsg(ClientFrame.userName, "300", "★Game Start!★"); // gameRoom 입장 시도
                     ListenNetwork.SendObject(obcm);
                     startButton.setEnabled(false);
                 }

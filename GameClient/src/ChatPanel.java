@@ -40,12 +40,12 @@ public class ChatPanel extends JPanel {
         sendBtn.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 String text = chatInput.getText();
-                if (GameClientFrame.waitingPlayerNum == 2) { //접속한 사용자가 있을 때 - 네트워크 전송
-                    ChatMsg msg = new ChatMsg(GameClientFrame.userName, "200", text);
+                if (ClientFrame.waitingPlayerNum == 2) { //접속한 사용자가 있을 때 - 네트워크 전송
+                    ChatMsg msg = new ChatMsg(ClientFrame.userName, "200", text);
                     ListenNetwork.SendObject(msg);
                 }
 
-                appendText(GameClientFrame.userName, text); //본인 채팅팬에 넣기
+                appendText(ClientFrame.userName, text); //본인 채팅팬에 넣기
                 chatInput.setText("");
             }
         });

@@ -5,34 +5,34 @@ import java.awt.event.MouseEvent;
 
 public class GameScreenPanel extends JPanel {
 
-    public GameWaitPanel gameWaitPanel;
+    public WaitingPanel waitingPanel;
     private GamePlayPanel gamePlayPanel = null;
     private ChatPanel chatPanel;
-    private String userName; // userName을 필드로 추가
+    private String userName;
 
-    public GameScreenPanel(GameClientFrame gameClientFrame, String userName) {
+    public GameScreenPanel(ClientFrame clientFrame, String userName) {
         this.userName = userName;
         setLayout(null);
         setSize(1000, 600);
         setVisible(true);
 
-        gameWaitPanel = new GameWaitPanel(gameClientFrame);
-        gameWaitPanel.setBounds(0, 0, 1000, 600); // 위치 및 크기 설정
-        gameWaitPanel.setBackground(Color.BLACK);
-        add(gameWaitPanel);
+        waitingPanel = new WaitingPanel(clientFrame);
+        waitingPanel.setBounds(0, 0, 1000, 600); // 위치 및 크기 설정
+        waitingPanel.setBackground(Color.BLACK);
+        add(waitingPanel);
         changeWaitPlayerNum();
     }
 
     public void changeWaitPlayerNum() {
-        gameWaitPanel.changePlayerNum(GameClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
-        if (GameClientFrame.waitingPlayerNum == 2) {
-            gameWaitPanel.addGameStartBtn();
+        waitingPanel.changePlayerNum(ClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
+        if (ClientFrame.waitingPlayerNum == 2) {
+            waitingPanel.addGameStartBtn();
         }
         repaint();
     }
 
     public void changeToPlaypanel() {
-        remove(gameWaitPanel);
+        remove(waitingPanel);
         if (gamePlayPanel == null) {
             gamePlayPanel = new GamePlayPanel();
             gamePlayPanel.setBounds(0, 0, 800, 600);
@@ -51,7 +51,7 @@ public class GameScreenPanel extends JPanel {
         if (chatPanel == null) { // chatPanel을 처음 생성하는 부분
             chatPanel = new ChatPanel(userName); // 저장한 userName을 넘겨줌
             chatPanel.setBounds(800, 0, 200, 600);
-            chatPanel.changePlayerList(GameClientFrame.playerNames);
+            chatPanel.changePlayerList(ClientFrame.playerNames);
             add(chatPanel);
         }
         this.repaint();

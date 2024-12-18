@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class GameRulePanel extends JPanel {
+public class RulesPanel extends JPanel {
     private Image gameRuleBackgroundImage = new ImageIcon("GameClient/image/background/background_gamerule.png").getImage();
 
     private ImageIcon gameStartImage = new ImageIcon("GameClient/image/game_start.png");
@@ -16,7 +16,7 @@ public class GameRulePanel extends JPanel {
     private ImageIcon gameStartHoverImage = new ImageIcon(applyColorFilter(gameStartImage, Color.decode("#B4FDFF")));
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
 
-    public GameRulePanel(GameClientFrame frame) {
+    public RulesPanel(ClientFrame frame) {
         setLayout(null);
 
         add(gameStartButton);  // 버튼 패널에 추가
@@ -26,7 +26,7 @@ public class GameRulePanel extends JPanel {
         gameStartButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                GameClientFrame.isGameStartScreen = true;  // 게임 규칙 화면으로 상태 변경
+                ClientFrame.isGameStartScreen = true;  // 게임 규칙 화면으로 상태 변경
                 frame.updateScreen();  // 화면 전환 메서드 호출
             }
 
@@ -43,7 +43,7 @@ public class GameRulePanel extends JPanel {
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                GameClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
+                ClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
                 frame.updateScreen();  // 화면 전환 메서드 호출
             }
 

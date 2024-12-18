@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class GameClientFrame extends JFrame {
+public class ClientFrame extends JFrame {
     public static boolean isChanged, isGameMainScreen, isGameStartScreen, isGameRulesScreen, isGameScreen, isWaitScreen, isPlayingScreen;  // 게임 규칙 화면 상태
     public static ListenNetwork net = null;
     public static String userName;
@@ -12,12 +12,12 @@ public class GameClientFrame extends JFrame {
     public static ArrayList<String> playerNames = new ArrayList<String>(); //유저 두명 이름
     public GameScreenPanel gameScreenPanel = null;
 
-    public GameClientFrame() {
+    public ClientFrame() {
         setTitle("Snowball Duo - Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         init();  // 초기화 메서드 호출
 
-        GameMainPanel mainPanel = new GameMainPanel(this);
+        MainPanel mainPanel = new MainPanel(this);
         mainPanel.setPreferredSize(new Dimension(1000, 600));
         setContentPane(mainPanel);
         pack();
@@ -57,13 +57,13 @@ public class GameClientFrame extends JFrame {
     public void updateScreen() {
         if (isGameMainScreen) {
             isGameMainScreen = false;
-            setContentPane(new GameMainPanel(this));
+            setContentPane(new MainPanel(this));
         } else if (isGameStartScreen) {  // 게임 시작 화면 전환
             isGameStartScreen = false;
-            setContentPane(new GameStartPanel(this));
+            setContentPane(new StartPanel(this));
         } else if (isGameRulesScreen) {  // 게임 규칙 화면으로 전환
             isGameRulesScreen = false;  // 상태 변경
-            setContentPane(new GameRulePanel(this));
+            setContentPane(new RulesPanel(this));
         } else if (isGameScreen) { // 대기화면
             isGameScreen = false;
             if(gameScreenPanel == null) {

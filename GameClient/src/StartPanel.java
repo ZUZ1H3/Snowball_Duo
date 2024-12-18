@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class GameStartPanel extends JPanel {
+public class StartPanel extends JPanel {
     private Image backgroundImage = new ImageIcon("GameClient/image/background/background.png").getImage();
     private Image penguinImage = new ImageIcon("GameClient/image/penguin_big.png").getImage();
     private Image sealImage = new ImageIcon("GameClient/image/seal_big.png").getImage();
@@ -21,7 +21,7 @@ public class GameStartPanel extends JPanel {
     private JTextField nameTextField = new JTextField("");
     private Font font_regular = new Font("Galmuri9 Regular", Font.PLAIN, 18);
 
-    public GameStartPanel(GameClientFrame frame) {
+    public StartPanel(ClientFrame frame) {
         setLayout(null);
         add(startButton);  // 버튼 패널에 추가
         add(backButton);
@@ -41,9 +41,9 @@ public class GameStartPanel extends JPanel {
                 }
                 else {
                     int port = 9999;
-                    GameClientFrame.net = new ListenNetwork(nameTextField.getText(), port);
-                    GameClientFrame.net.start();
-                    GameClientFrame.userName = nameTextField.getText();
+                    ClientFrame.net = new ListenNetwork(nameTextField.getText(), port);
+                    ClientFrame.net.start();
+                    ClientFrame.userName = nameTextField.getText();
                 }
             }
 
@@ -62,7 +62,7 @@ public class GameStartPanel extends JPanel {
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                GameClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
+                ClientFrame.isGameMainScreen = true;  // 게임 규칙 화면으로 상태 변경
                 frame.updateScreen();  // 화면 전환 메서드 호출
             }
 

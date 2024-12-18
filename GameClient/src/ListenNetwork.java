@@ -4,7 +4,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -81,7 +80,7 @@ public class ListenNetwork extends Thread {
                             String loginResult = cm.getData().split(" ")[0];
                             System.out.println("loginResult = " + loginResult + "로그인 성공 여부");
                             if (loginResult.equals(ALLOW_LOGIN_MSG)) {
-                                GameClientFrame.isGameScreen = true;
+                                ClientFrame.isGameScreen = true;
                                 //isLogin = true;
                                 System.out.println(cm.getData());
 
@@ -89,28 +88,28 @@ public class ListenNetwork extends Thread {
                                     case "1":
                                         if (playerCharacter == 0) // 처음 입장한 플레이어인 경우
                                             playerCharacter = 1;
-                                        GameClientFrame.waitingPlayerNum = 1;
-                                        GameClientFrame.playerNames.add(userName);
+                                        ClientFrame.waitingPlayerNum = 1;
+                                        ClientFrame.playerNames.add(userName);
                                         break;
                                     case "2":
                                         String[] playerNames = cm.getData().split(" ")[2].split("//");
                                         if (playerCharacter == 0) {// 2번째로 입장한 플레이어인 경우
                                             playerCharacter = 2;
                                             for (int i = 0; i < playerNames.length; i++)
-                                                GameClientFrame.playerNames.add(playerNames[i]);
+                                                ClientFrame.playerNames.add(playerNames[i]);
                                         } else { // 대기하고 있던 플레이어인 경우
-                                            GameClientFrame.playerNames.add(playerNames[1]);
+                                            ClientFrame.playerNames.add(playerNames[1]);
                                         }
-                                        GameClientFrame.waitingPlayerNum = 2;
+                                        ClientFrame.waitingPlayerNum = 2;
                                         break;
                                 }
 
                                 System.out.println(userName + " : " + playerCharacter + "번 캐릭터");
-                                GameClientFrame.userNum = playerCharacter;
-                                GameClientFrame.isChanged = true; // 화면 변화가 필요함
-                                GameClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
+                                ClientFrame.userNum = playerCharacter;
+                                ClientFrame.isChanged = true; // 화면 변화가 필요함
+                                ClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
                             } else if (loginResult.equals(DENY_LOGIN_MSG)) {
-                                GameClientFrame.isGameScreen = false;
+                                ClientFrame.isGameScreen = false;
                                 JOptionPane.showMessageDialog(null, "서버 인원 초과");
                                 return;
                             }
@@ -120,9 +119,9 @@ public class ListenNetwork extends Thread {
                             ChatPanel.appendText(cm.getUserName(), cm.getData());
                             break;
                         case "300": //게임 스타트
-                            GameClientFrame.isWaitScreen = false;
-                            GameClientFrame.isChanged = true;
-                            GameClientFrame.isPlayingScreen = true;
+                            ClientFrame.isWaitScreen = false;
+                            ClientFrame.isChanged = true;
+                            ClientFrame.isPlayingScreen = true;
                             isPlayingGame = true;
                             break;
                     }
@@ -134,7 +133,7 @@ public class ListenNetwork extends Thread {
                     ois.close();
                     oos.close();
                     socket.close();
-                    GameClientFrame.net = null;
+                    ClientFrame.net = null;
                     break;
                 } catch (Exception ee) {
                     System.out.println("e2");
@@ -152,7 +151,7 @@ public class ListenNetwork extends Thread {
             ois.close();
             oos.close();
             socket.close();
-            GameClientFrame.net = null;
+            ClientFrame.net = null;
         } catch (Exception ee) {
             System.out.println("exitRoom ee");
         } // catch문 끝

@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 
-public class GameServerFrame extends JFrame {
+public class ServerFrame extends JFrame {
     private Image backgroundImage = new ImageIcon("GameClient/image/background/background_mini.png").getImage();
     private ImageIcon portImage = new ImageIcon("GameClient/image/port.png");
     private ImageIcon serverStartImage = new ImageIcon("GameClient/image/server_start.png");
@@ -23,7 +23,7 @@ public class GameServerFrame extends JFrame {
     private ServerSocket socket; // 서버소켓
     private Socket client_socket; // accept() 에서 생성된 client 소켓
 
-    private GameRoom gameRoom;
+    private Room room;
 
     private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
     private static final String ALLOW_LOGIN_MSG = "ALLOW";
@@ -31,7 +31,7 @@ public class GameServerFrame extends JFrame {
     private Font font_bold = new Font("Galmuri11 Bold", Font.PLAIN, 16);
     private Font font_regular = new Font("Galmuri9 Regular", Font.PLAIN, 12);
 
-    public GameServerFrame(int port) {
+    public ServerFrame(int port) {
         this.port = port;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -97,8 +97,8 @@ public class GameServerFrame extends JFrame {
                 serverStartButton.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
                 txtPortNumber.setEnabled(false); // 더이상 포트번호 수정 못하게 막는다
 
-                gameRoom = new GameRoom(socket); //단일 서버
-                gameRoom.start();
+                room = new Room(socket); //단일 서버
+                room.start();
                 AcceptServer accept_server = new AcceptServer(socket);
                 accept_server.start();
             }
@@ -193,10 +193,10 @@ public class GameServerFrame extends JFrame {
         }
 
         public boolean Login() {
-            if (gameRoom.enterRoom(UserName)) {
-                gameRoom.getUserVec().add(this);
+            if (room.enterRoom(UserName)) {
+                room.getUserVec().add(this);
                 AppendText("새로운 참가자 " + UserName + " 입장.");
-                AppendText("참가자 " + gameRoom.getUserVec().size() + "/2");
+                AppendText("참가자 " + room.getUserVec().size() + "/2");
 				return true;
             } else {
                 AppendText("새로운 참가자 " + UserName + " 입장 거절 당함.");
@@ -205,15 +205,15 @@ public class GameServerFrame extends JFrame {
         }
 
         public int getPlayerNum() { // gameRoom에 입장한 플레이어 수
-            return gameRoom.getUserVec().size();
+            return room.getUserVec().size();
         }
 
 
         public void Logout() {
             System.out.println("LOGOUT 중");
             //gameRoom.getUserNameVec().remove(UserName);
-            gameRoom.getUserVec().remove(this);
-            System.out.println(gameRoom.getUserVec().size());
+            room.getUserVec().remove(this);
+            System.out.println(room.getUserVec().size());
             String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
             user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
             AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + user_vc.size());
@@ -230,7 +230,7 @@ public class GameServerFrame extends JFrame {
 
         // 모든 User들에게 Object를 방송. 채팅 message와 image object를 보낼 수 있다
         public void WriteAllObject(Object ob) {
-            Vector gameRoomUserVec = gameRoom.getUserVec();
+            Vector gameRoomUserVec = room.getUserVec();
             int userVecSize = gameRoomUserVec.size();
             for (int i = 0; i < userVecSize; i++) {
                 UserService user = (UserService) gameRoomUserVec.elementAt(i);
@@ -249,7 +249,7 @@ public class GameServerFrame extends JFrame {
         }
 
         public void WriteOtherObject(Object ob) {
-            Vector gameRoomUserVec = gameRoom.getUserVec();
+            Vector gameRoomUserVec = room.getUserVec();
             int userVecSize = gameRoomUserVec.size();
             for (int i = 0; i < userVecSize; i++) {
                 UserService user = (UserService) gameRoomUserVec.elementAt(i);
@@ -416,7 +416,7 @@ public class GameServerFrame extends JFrame {
     }
 
     public String getUserNames() {
-        Vector userNames = gameRoom.getUserNameVec();
+        Vector userNames = room.getUserNameVec();
         return userNames.get(0)+"//"+userNames.get(1);
     }
 }
