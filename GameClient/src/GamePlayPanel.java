@@ -1,52 +1,49 @@
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import Map.Block;
-import Map.Door;
-import Map.Item;
 import Map.Barrier;
+import Map.Item;
+import Map.Door;
 import Map.Button;
 import Map.ButtonBlock;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class GamePlayPanel extends JPanel implements Runnable{
-
-    private final int WIDTH = 713;
-    private final int HEIGHT = 544;
+public class GamePlayPanel extends JPanel implements Runnable {
+    private final int WIDTH = 800;
+    private final int HEIGHT = 600;
 
     private final int IMG_WIDTH = 48;
     private final int IMG_HEIGHT = 59;
     private final int RUN_IMG_WIDTH = 68;
     private final int RUN_IMG_HEIGHT = 61;
 
-    private final int CHARACTER_WIDTH = 25; // 실제 캐릭터 이미지 너비
-    private final int CHARACTER_HEIGHT = 35; // 실제 캐릭터 이미지 높이
-
     int myWidth, myHeight;
     int opponentWidth, opponentHeight;
 
-    private Map map;
     private int stageNum = 1;
+    private Map map;
     private ArrayList<Block> blocks = null;
-    public static ArrayList<Item> items = null;
-    public static ArrayList<Barrier> obstacles = null;
-    public static ArrayList<Door> doors = null;
-    public static ArrayList<ButtonBlock> switchBlocks = null;
-    public static ArrayList<Button> switchBtns = null;
+    private static ArrayList<Barrier> barriers = null;
+    private static ArrayList<Item> items = null;
+    private static ArrayList<Door> doors = null;
+    private static ArrayList<Button> buttons = null;
+    private static ArrayList<ButtonBlock> buttonBlocks = null;
 
+    //스위치 관련 변수
     public static boolean isOpponentSwitchOn = false;
     public static int opponentlastSwitchIdx = -1;
 
     public static boolean isMySwitchOn = false;
     public static int mylastOnSwitchIdx = -1;
 
+    //키 어댑터
     public KeyAdapter testKey;
 
-    //게임 제어를 위한 변수
+    //게임 제어
     int status;//게임의 상태
     int cnt;//루프 제어용 컨트롤 변수
     int delay;//루프 딜레이. 1/1000초 단위.
@@ -70,8 +67,9 @@ public class GamePlayPanel extends JPanel implements Runnable{
     int fallingDist = 6;
     int xmovingDist = 6;
 
-    // 이미지 파일 불러오는 툴킷.
+    // 이미지 툴킷
     Toolkit imageTool = Toolkit.getDefaultToolkit();
+    Image mapImg = imageTool.getImage("GameClient/image/background/background_ingame.png");
     PlayerInfo myInfo = new PlayerInfo();
     PlayerInfo opponentInfo = new PlayerInfo();
 
@@ -81,7 +79,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
 
     Image openFireDoorImg = imageTool.getImage("GameClient/image/map/peng_door.png");
     Image openWaterDoorImg = imageTool.getImage("GameClient/image/map/harp_door.png");
-    Image mapImg = imageTool.getImage("GameClient/image/background/background_ingame.png");
 
     // 이미지 버퍼
     Image buffImg;
@@ -91,16 +88,15 @@ public class GamePlayPanel extends JPanel implements Runnable{
     int myXpos = 50;
     int myYpos = 50;
 
-    int opponentXpos = 80;
-    int opponentYpos = 50;
+    int opponentXpos = 100;
+    int opponentYpos = 150;
 
-    boolean roof=true;//스레드 루프 정보
+    boolean roof = true;//스레드 루프 정보
 
-    // =================================================================================================
     public void gameControll() {
         playerItemGetCheck();
         playerObstacleCheck();
-        if(items.size()==0) {
+        if (items.size() == 0) {
             playerArriveCheck();
         }
     }
@@ -113,35 +109,34 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
 
     public static void switchOn(int i) { // 상대방이 먹은 item 없애기
-        if (switchBtns != null) {
-            switchBtns.get(i).setSwitchState(true);
+        if (buttons != null) {
+            buttons.get(i).setSwitchState(true);
             isOpponentSwitchOn = true;
             opponentlastSwitchIdx = i;
         }
     }
 
     public static void switchOff(int i) {
-        if (switchBtns != null) {
-            switchBtns.get(i).setSwitchState(false);
+        if (buttons != null) {
+            buttons.get(i).setSwitchState(false);
             isOpponentSwitchOn = false;
             opponentlastSwitchIdx = -1;
         }
     }
 
     public void playerItemGetCheck() {
-        for(int i=0;i<items.size();i++) {//Item m : items
+        for (int i = 0; i < items.size(); i++) {//Item m : items
 
             Item m = items.get(i);
-            if (!(m.getMapNumber()%2 == ClientFrame.userNum%2)) continue;
+            if (!(m.getMapNumber() % 2 == ClientFrame.userNum % 2)) continue;
 
-            if(((m.getX()<=myXpos&&myXpos<=m.getX()+m.getWidth())||(m.getX()<=myXpos+myWidth&&myXpos+myWidth<=m.getX()+m.getWidth()))
-                    &&((myYpos<=m.getY()&&m.getY()<=myYpos+myHeight)||(myYpos<=m.getY()+m.getHeight()&&m.getY()+m.getHeight()<=myYpos+myHeight))) {
+            if (((m.getX() <= myXpos && myXpos <= m.getX() + m.getWidth()) || (m.getX() <= myXpos + myWidth && myXpos + myWidth <= m.getX() + m.getWidth()))
+                    && ((myYpos <= m.getY() && m.getY() <= myYpos + myHeight) || (myYpos <= m.getY() + m.getHeight() && m.getY() + m.getHeight() <= myYpos + myHeight))) {
                 items.remove(m);
                 //TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
-                ListenNetwork.SendObject(new ChatMsg("550",i,"ITEM"));
+                ListenNetwork.SendObject(new ChatMsg("550", i, "ITEM"));
                 break;
-            }
-            else
+            } else
                 continue;
 
         }
@@ -149,26 +144,25 @@ public class GamePlayPanel extends JPanel implements Runnable{
 
     public void playerOnSwitchCheck() {
 
-        for(int i=0;i<switchBtns.size();i++) {//Item m : items
-            Button s = switchBtns.get(i);
+        for (int i = 0; i < buttons.size(); i++) {//Item m : items
+            Button s = buttons.get(i);
 
             if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
 
-            if(characterRec.intersects(s.getRectButton())) {
+            if (characterRec.intersects(s.getRectButton())) {
                 //TODO:네트워크로 스위치 눌렸다고 보내줘야함
                 //ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
                 s.setSwitchState(true);
                 System.out.println("스위치가 눌렸음");
                 isMySwitchOn = true;
                 mylastOnSwitchIdx = i;
-                ListenNetwork.SendObject(new ChatMsg("550",i,"SWITCH_ON"));
+                ListenNetwork.SendObject(new ChatMsg( "550", i, "SWITCH_ON"));
                 break;
-            }
-            else if (isMySwitchOn && mylastOnSwitchIdx == i){
+            } else if (isMySwitchOn && mylastOnSwitchIdx == i) {
                 System.out.println("스위치가 안눌림");
                 isMySwitchOn = false;
                 mylastOnSwitchIdx = -1;
-                ListenNetwork.SendObject(new ChatMsg("550",i,"SWITCH_OFF"));
+                ListenNetwork.SendObject(new ChatMsg( "550", i, "SWITCH_OFF"));
                 s.setSwitchState(false);
             }
 
@@ -176,54 +170,47 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
 
     public void playerObstacleCheck() {
-        for(int i=0;i<obstacles.size();i++) {//Item m : items
+        for (int i = 0; i < barriers.size(); i++) {//Item m : items
 
-            Barrier o = obstacles.get(i);
+            Barrier o = barriers.get(i);
 
-            if (o.getMapNumber()%2 == ClientFrame.userNum%2) {
+            if (o.getMapNumber() % 2 == ClientFrame.userNum % 2) {
                 continue;
             }
 
-            if(((o.getX()+20<=myXpos+myWidth&&myXpos+myWidth<=o.getX()+o.getWidth()-20)||(o.getX()+20<=myXpos&&myXpos<=o.getX()+o.getWidth()-20))&&
-                    (o.getY()<=myYpos+myHeight+15&&myYpos+myHeight+10<=o.getY()+o.getHeight())) {
+            if (((o.getX() + 20 <= myXpos + myWidth && myXpos + myWidth <= o.getX() + o.getWidth() - 20) || (o.getX() + 20 <= myXpos && myXpos <= o.getX() + o.getWidth() - 20)) &&
+                    (o.getY() <= myYpos + myHeight + 15 && myYpos + myHeight + 10 <= o.getY() + o.getHeight())) {
                 System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 isDie = true;
                 ClientFrame.net.isPlayingGame = false;
-                character = imageTool.getImage(myInfo.getDieImgPath());
-                ListenNetwork.SendObject(new ChatMsg(ClientFrame.userName,"600","GameOver")); // GameOver 전송
+                //character = imageTool.getImage(myInfo.getDieImgPath());
+                ListenNetwork.SendObject(new ChatMsg(ClientFrame.userName, "600", "GameOver")); // GameOver 전송
                 break;
-            }
-
-            else {
+            } else {
                 continue;
             }
         }
     }
 
     public void playerArriveCheck() {
-        for(int i=0;i<doors.size();i++) {
+        for (int i = 0; i < doors.size(); i++) {
             Door door = doors.get(i);
 
-            if(door.getMapNumber()%2 == ClientFrame.userNum%2) { // user가 도착했는지 판단
-                if(myInfo.getState()==State.FRONT&&(door.getX()<=myXpos&&myXpos<=door.getX()+door.getWidth())
-                        && (door.getX()<=myXpos+myWidth&&myXpos+myWidth<=door.getX()+door.getWidth())
-                        && (door.getY()<=myYpos&&myYpos<=door.getY()+door.getHeight())) {
+            if (door.getMapNumber() % 2 == ClientFrame.userNum % 2) { // user가 도착했는지 판단
+                if (myInfo.getState() == State.FRONT && (door.getX() <= myXpos && myXpos <= door.getX() + door.getWidth())
+                        && (door.getX() <= myXpos + myWidth && myXpos + myWidth <= door.getX() + door.getWidth())
+                        && (door.getY() <= myYpos && myYpos <= door.getY() + door.getHeight())) {
                     isArrive = true;
-                }
-                else
-                {
+                } else {
                     isArrive = false;
                 }
-            }
-            else { // opponent가 도착했는지 판단
+            } else { // opponent가 도착했는지 판단
 
-                if(opponentInfo.getState()==State.FRONT&&(door.getX()<=opponentXpos&&opponentXpos<=door.getX()+door.getWidth())
-                        && (door.getX()<=opponentXpos+opponentWidth&&opponentXpos+opponentWidth<=door.getX()+door.getWidth())
-                        && (door.getY()<=opponentYpos&&opponentYpos<=door.getY()+door.getHeight())) {
+                if (opponentInfo.getState() == State.FRONT && (door.getX() <= opponentXpos && opponentXpos <= door.getX() + door.getWidth())
+                        && (door.getX() <= opponentXpos + opponentWidth && opponentXpos + opponentWidth <= door.getX() + door.getWidth())
+                        && (door.getY() <= opponentYpos && opponentYpos <= door.getY() + door.getHeight())) {
                     isOpponentArrive = true;
-                }
-                else
-                {
+                } else {
                     isOpponentArrive = false;
                 }
             }
@@ -232,26 +219,24 @@ public class GamePlayPanel extends JPanel implements Runnable{
         }
     }
 
-
-    // =======================================================================================
-    // 스레드 파트
-    public void run(){
-        try
-        {
-            while(roof){
-                pretime=System.currentTimeMillis();
-                gameControll();
-                if(isDie || isOpponentDie) { // 죽은 경우, 클리어한 경우 스레드 종료
+    //---------------------------------------------------
+    //스레드 파트
+    public void run() {
+        try {
+            while (roof) {
+                pretime = System.currentTimeMillis();
+                //게임 컨트롤
+                if (isDie || isOpponentDie) {
+                    //죽은 경우 -> 스레드 종료
                     Thread.sleep(1000);
                     break;
-                }
-                else if(isGameClear) {
-                    if(stageNum==1) {
+                } else if (isGameClear) {
+                    if (stageNum == 1) {
                         Thread.sleep(1100);
-                        stageNum=2;
-                        settingMap();
+                        stageNum = 2;
+                        setMap();
                         initState();
-                        switch(ClientFrame.userNum) {
+                        switch (ClientFrame.userNum) {
                             case 1:
                                 myXpos = 35;
                                 myYpos = 40;
@@ -267,67 +252,44 @@ public class GamePlayPanel extends JPanel implements Runnable{
                                 opponentYpos = 40;
                                 break;
                         }
-                    }else {
+                    } else {
                         Thread.sleep(700);
                         break;
                     }
                 }
 
-                repaint();//화면 리페인트
+                repaint();
 
-                if(System.currentTimeMillis()-pretime<delay) Thread.sleep(delay-System.currentTimeMillis()+pretime);
-                //게임 루프를 처리하는데 걸린 시간을 체크해서 딜레이값에서 차감하여 딜레이를 일정하게 유지한다.
-                //루프 실행 시간이 딜레이 시간보다 크다면 게임 속도가 느려지게 된다.
-
-                if(status!=4) cnt++;
+                if (System.currentTimeMillis() - pretime < delay)
+                    Thread.sleep(delay - System.currentTimeMillis() + pretime);
+                if (status != 4) cnt++;
             }
 
-//            // GameOverPanel로 이동
-//            if(isDie || isOpponentDie) {
-//                ClientFrame.isChanged = true; // 화면 변화가 필요함
-//                ClientFrame.isGameOverScreen = true; // 게임 대기화면으로 변화
-//            }
-//            else if(isGameClear) {
-//                moveThread.interrupt();
-//                ClientFrame.net.isPlayingGame = false;
-//                ClientFrame.isChanged = true; // 화면 변화가 필요함
-//                ClientFrame.isGameClearScreen = true; // 게임 클리어화면으로 변화
-//            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
 
-//       System.out.println("game 종료");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void settingMap() { // 맵 세팅하기
-        String mapPath = "";
-        switch(stageNum) {
-            case 1:
-                mapPath = "GameClient/src/resource/map.txt";
-                break;
-            case 2:
-                mapPath = "src/resource/map2.txt";
-                break;
-        }
-
+    public void setMap() {
+        String mapPath = "GameClient/src/resource/map.txt";
         map = new Map(mapPath);
         blocks = map.getBlocks();
+        barriers = map.getBarriers();
         items = map.getItems();
-        obstacles = map.getBarriers();
         doors = map.getDoors();
-        switchBlocks = map.getButtonBlocks();
-        switchBtns = map.getButtons();
+        buttons = map.getButtons();
+        buttonBlocks = map.getButtonBlocks();
 
-        for(Button switchBtn:switchBtns) {
-            System.out.println("들어오긴한다!!!");
-            if (switchBlocks.size() != 0) {
-                System.out.println("여기다!!!");
-                switchBtn.setManageBlock(switchBlocks.get(0));
-            }
-        }
+//        if (blocks != null) {
+//            System.out.println("Blocks initialized. Count: " + blocks.size());
+//            for (Block block : blocks) {
+//                System.out.println("Block X: " + block.getX() + ", Y: " + block.getY());
+//                System.out.println("Block Image: " + block.getBlockImage());
+//            }
+//        } else {
+//            System.out.println("Blocks are null!");
+//        }
     }
 
     public void initState() {
@@ -342,39 +304,18 @@ public class GamePlayPanel extends JPanel implements Runnable{
         isGameClear = false;
     }
 
-    public void updateCharacterSize() {
-        myWidth = 25; // 이미지 크기
-        myHeight = 35;
-        characterRec = new Rectangle(myXpos, myYpos, myWidth, myHeight);
-    }
-
-    public void systeminit(){//프로그램 초기화
-        status=0;
-        cnt=0;
-        delay=17;// 17/1000초 = 58 (프레임/초)
-        keybuff=0;
+    public void systeminit() {
+        status = 0;
+        cnt = 0;
+        delay = 17;// 17/1000초 = 58 (프레임/초)
+        keybuff = 0;
 
         initState();
-        updateCharacterSize();
 
-        //맵 설정
-        settingMap();
-
-        myXpos = 200; // 초기 위치 지정
-        myYpos = 400;
-        System.out.println("Initial Position: myXpos=" + myXpos + ", myYpos=" + myYpos);
-
-        for(Button switchBtn:switchBtns) {
-            System.out.println("들어오긴한다!!!");
-            if (switchBlocks.size() != 0) {
-                System.out.println("여기다!!!");
-                switchBtn.setManageBlock(switchBlocks.get(0));
-            }
-        }
-
+        setMap();
 
         // 캐릭터 설정
-        switch(ClientFrame.userNum) {
+        switch (ClientFrame.userNum) {
             case 1:
                 myInfo.setUserNum(1);
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
@@ -408,61 +349,54 @@ public class GamePlayPanel extends JPanel implements Runnable{
         }
         character = imageTool.getImage(myInfo.getCharacterImgPath());
 //	  System.out.println(new ImageIcon(character).getIconWidth()+","+new ImageIcon(character).getIconHeight());
-        opponent =  imageTool.getImage(opponentInfo.getCharacterImgPath());
-        mainwork=new Thread(this);
+        opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
+        mainwork = new Thread(this);
         mainwork.start();
+
     }
 
-
-    public GamePlayPanel(){
-        // 프레임의 대한 설정.
-        setSize(WIDTH,HEIGHT);
-        setFocusable(true); // 포커스 가능 설정
-        requestFocusInWindow(); // 현재 창에서 포커스 요청
-
-        // 프레임의 x버튼 누르면 프로세스 종료.
+    public GamePlayPanel() {
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
         systeminit();
+
+        // 키 리스너 등록
+        setFocusable(true);
+        requestFocusInWindow(); // 키 입력을 받기 위한 포커스 설정
 
         MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, State.FRONT); // gameRoom 입장 시도
         ListenNetwork.SendObject(obcm);
 
-        addKeyListener(testKey); // 키 이벤트 등록
-        setVisible(true); // 패널이 표시되도록 설정
-
-        // 디버깅: 포커스 여부 확인
-        if (!hasFocus()) {
-            System.out.println("Panel does not have focus!");
-        }
+        moveThread.start();
 
         testKey = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-            	System.out.println("키가 눌림");
-                switch(e.getKeyCode()) {
+                System.out.println("키가 눌림");
+                switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
-                        if(!isJumping && !isFalling)
+                        if (!isJumping && !isFalling)
                             isJumping = true;
                         break;
                     case KeyEvent.VK_LEFT:
-                    	 System.out.println("left 키 눌림 ");
-                        if(isMovingRight)
-                            isMovingRight=false;
+                        System.out.println("left 키 눌림 ");
+                        if (isMovingRight)
+                            isMovingRight = false;
                         isMovingLeft = true;
                         break;
                     case KeyEvent.VK_RIGHT:
-                        if(!isMovingRight)
+                        if (!isMovingRight)
                             myXpos -= 10;
-                    	 System.out.println("right 키 눌림");
-                        if(isMovingLeft)
-                            isMovingLeft=false;
+                        System.out.println("right 키 눌림");
+                        if (isMovingLeft)
+                            isMovingLeft = false;
                         isMovingRight = true;
                         break;
                 }
                 repaint(); // 화면 갱신
             }
+
             @Override
             public void keyReleased(KeyEvent e) {
-                System.out.println("Key released: " + e.getKeyCode());
-                switch(e.getKeyCode()) {
+                switch (e.getKeyCode()) {
                     case KeyEvent.VK_RIGHT:
                         myXpos += 10;
                         isMovingRight = false;
@@ -471,122 +405,102 @@ public class GamePlayPanel extends JPanel implements Runnable{
                         isMovingLeft = false;
                         break;
                 }
+                repaint(); // 화면 갱신
             }
         };
-        addKeyListener(testKey); // 키 이벤트 리스너 등록
-        moveThread.start();
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        buffImg = createImage(getWidth(),getHeight()); // 버퍼링용 이미지 ( 도화지 )
-        buffG = buffImg.getGraphics(); // 버퍼링용 이미지에 그래픽 객체를 얻어야 그릴 수 있다고 한다. ( 붓? )
-
-        update(g);
-//        if(characterRec!=null) {
-//        	g.setColor(Color.YELLOW);
-//        	g.drawRect(characterRec.x,characterRec.y,characterRec.width,characterRec.height);
-//        }
-//
-//        for(int i=0;i<obstacles.size();i++) {
-//        	g.setColor(Color.CYAN);
-//        	g.drawRect(obstacles.get(i).getX()+20, obstacles.get(i).getY(), obstacles.get(i).getWidth()-40, obstacles.get(i).getHeight());
-//        }
-//
-//        for(int i=0;i<switchBtns.size();i++) {
-//        	g.setColor(Color.CYAN);
-//        	g.drawRect(switchBtns.get(i).getX(), switchBtns.get(i).getY(), switchBtns.get(i).getWidth(), switchBtns.get(i).getHeight());
-//        }
     }
 
 
     @Override
-    public void update(Graphics g) {
-        System.out.println("Drawing character at myXpos=" + myXpos + ", myYpos=" + myYpos);
-        buffG.clearRect(0, 0, WIDTH, HEIGHT); // 백지화
-        buffG.drawImage(mapImg,0,0, this);
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-        // 기존 그리기 코드
-        buffG.setColor(Color.RED); // 충돌 박스 색상
-        buffG.drawRect(myXpos, myYpos, myWidth, myHeight); // 캐릭터 충돌 영역 표시
+        int xOffset = 10; // 오른쪽으로 10 픽셀 이동
+        int yOffset = 10;  // 아래로 10 픽셀 이동
 
-        g.drawImage(buffImg, 0, 0, this); // 화면 갱신
-
-        for (Block block : blocks)
-            buffG.drawImage(block.getBlockImage(),block.getX(),block.getY(),this);
-
-        for (Item item : items)
-            buffG.drawImage(item.getItemImage(),item.getX(),item.getY(),this);
-
-        for (Barrier obstacle : obstacles)
-            buffG.drawImage(obstacle.getBarrierImage(),obstacle.getX(),obstacle.getY(),this);
-
-
-        for (Door door : doors)
-            buffG.drawImage(door.getDoorImage(),door.getX(),door.getY(),this);
-
-        for (ButtonBlock switchBlock:switchBlocks) {
-            if (switchBlock.getIsVisible())
-                buffG.drawImage(switchBlock.getButtonBlockImage(),switchBlock.getX(),switchBlock.getY(),this);
+        // 배경 이미지 그리기
+        if (mapImg != null) {
+            g.drawImage(mapImg, 0, 0, WIDTH, HEIGHT, this);
         }
 
-        for (Button switchBtn: switchBtns) {
-            buffG.drawImage(switchBtn.getButtonImage(),switchBtn.getX(),switchBtn.getY(),this);
-        }
+        // 캐릭터 이미지 그리기
+        g.drawImage(character, myXpos, myYpos, this);
+
+        // 상대 캐릭터 이미지 그리기
+        g.drawImage(opponent, opponentXpos, opponentYpos, this);
 
 
-        if(!(isArrive&&isOpponentArrive)) { // 모두 도착 X
-            buffG.drawImage(character, myXpos, myYpos, this);
-//          System.out.println("draw character ==> "+character.toString());
-
-            if(!isOpponentDie) {
-                switch(opponentInfo.getState()) {
-                    case LEFT:
-                        opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
-                        break;
-                    case RIGHT:
-                        opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
-                        break;
-                    case FRONT:
-                        opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
-                        break;
+        // 블록 그리기
+        if (blocks != null) {
+            for (Block block : blocks) {
+                if (block.getBlockImage() != null) {
+                    g.drawImage(block.getBlockImage(), block.getX() + xOffset, block.getY() + yOffset, this);
+                } else {
+                    System.out.println("Block image is null at X: " + block.getX() + ", Y: " + block.getY());
                 }
             }
-
-            buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
-
-            // 디버깅: 위치 출력
-            System.out.println("myXpos: " + myXpos + ", myYpos: " + myYpos);
         }
-        else { // 모두 도착한 경우
-            for(Door door:doors) {
-                if(door.getMapNumber()%2==0) {
-                    buffG.drawImage(openWaterDoorImg,door.getX(),door.getY(),this);
-                }
-                else {
-                    buffG.drawImage(openFireDoorImg,door.getX(),door.getY(),this);
+        //장애물 그리기
+        if (barriers != null) {
+            for (Barrier barrier : barriers) {
+                if (barrier.getBarrierImage() != null) {
+                    g.drawImage(barrier.getBarrierImage(), barrier.getX() + xOffset, barrier.getY() + yOffset, this);
+                } else {
+                    System.out.println("Barrier image is null at X: " + barrier.getX() + ", Y: " + barrier.getY());
                 }
             }
-            isGameClear = true;
-
         }
-
-        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
-        repaint();
+        if (items != null) {
+            for (Item item : items) {
+                if (item.getItemImage() != null) {
+                    g.drawImage(item.getItemImage(), item.getX() + xOffset, item.getY() + yOffset, this);
+                } else {
+                    System.out.println("Item image is null at X: " + item.getX() + ", Y: " + item.getY());
+                }
+            }
+        }
+        //문 그리기
+        if (doors != null) {
+            for (Door door : doors) {
+                if (door.getDoorImage() != null) {
+                    g.drawImage(door.getDoorImage(), door.getX() + xOffset, door.getY() + yOffset, this);
+                } else {
+                    System.out.println("Door image is null at X: " + door.getX() + ", Y: " + door.getY());
+                }
+            }
+        }
+        if (buttons != null) {
+            for (Button button : buttons) {
+                if (button.getButtonImage() != null) {
+                    g.drawImage(button.getButtonImage(), button.getX() + 5 + xOffset, button.getY() + yOffset, this);
+                } else {
+                    System.out.println("Button image is null at X: " + button.getX() + ", Y: " + button.getY());
+                }
+            }
+        }
+        if (buttonBlocks != null) {
+            for (ButtonBlock buttonBlock : buttonBlocks) {
+                if (buttonBlock.getButtonBlockImage() != null) {
+                    g.drawImage(buttonBlock.getButtonBlockImage(), buttonBlock.getX() + xOffset, buttonBlock.getY() + yOffset, this);
+                } else {
+                    System.out.println("ButtonBlock image is null at X: " + buttonBlock.getX() + ", Y: " + buttonBlock.getY());
+                }
+            }
+        }
     }
 
-    private class MoveThread extends Thread{
+    private class MoveThread extends Thread {
         public void run() {
-            while(true) {
-                if(isDie||isOpponentDie) // 죽은 경우, 게임 클리어한 경우 스레드 종료
+            while (true) {
+                if (isDie || isOpponentDie) // 죽은 경우, 게임 클리어한 경우 스레드 종료
                     break;
                 setCharacterImg();
-                if(isJumping)
+                if (isJumping)
                     jumping();
                 else {
                     falling();
                 }
-                if(isMovingLeft||isMovingRight)
+                if (isMovingLeft || isMovingRight)
                     xMoving();
                 playerOnSwitchCheck();
                 MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, myInfo.getState());
@@ -602,15 +516,13 @@ public class GamePlayPanel extends JPanel implements Runnable{
     }
 
     public void setCharacterImg() {
-        if(isMovingLeft) {
+        if (isMovingLeft) {
             character = imageTool.getImage(myInfo.getRunLeftImgPath());
             myInfo.setState(State.LEFT);
-        }
-        else if(isMovingRight) {
+        } else if (isMovingRight) {
             character = imageTool.getImage(myInfo.getRunRightImgPath());
             myInfo.setState(State.RIGHT);
-        }
-        else {
+        } else {
             character = imageTool.getImage(myInfo.getCharacterImgPath());
             myInfo.setState(State.FRONT);
         }
@@ -634,14 +546,12 @@ public class GamePlayPanel extends JPanel implements Runnable{
                 isJumping = false;
                 isFalling = true;
             }
-            repaint();
         }
     }
 
     public void falling() {
         if (canMove(myXpos, myYpos + fallingDist)) {
             myYpos += fallingDist;
-            repaint();
         } else {
             isFalling = false;
         }
@@ -659,10 +569,6 @@ public class GamePlayPanel extends JPanel implements Runnable{
                 myXpos += xmovingDist;
             }
         }
-
-        // 디버깅: 이동 출력
-        System.out.println("Moving: myXpos=" + myXpos + ", myYpos=" + myYpos);
-        repaint(); // 이동 후 화면 갱신
     }
 
     public void setMoving(int x, int y, State type) {
@@ -678,83 +584,76 @@ public class GamePlayPanel extends JPanel implements Runnable{
         isOpponentDie = true;
     }
 
-    public boolean canMove(int x, int y) {
-        System.out.println("Checking movement to x=" + x + ", y=" + y);// 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
-        switch(myInfo.getState()) {
+    public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
+        switch (myInfo.getState()) {
             case LEFT:
-                if(ClientFrame.userNum==1) { // 나:fireboy 상대방:watergirl
+                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
                     y += 10;
-                    myWidth = RUN_IMG_WIDTH-45;
-                    myHeight = RUN_IMG_HEIGHT-17;
-                    opponentWidth = RUN_IMG_WIDTH-45;
-                    opponentHeight = RUN_IMG_HEIGHT-17;
-                }
-                else { // 나:watergirl 상대방:fireboy
+                    myWidth = RUN_IMG_WIDTH - 45;
+                    myHeight = RUN_IMG_HEIGHT - 17;
+                    opponentWidth = RUN_IMG_WIDTH - 45;
+                    opponentHeight = RUN_IMG_HEIGHT - 17;
+                } else { // 나:watergirl 상대방:fireboy
                     y += 10;
-                    myWidth = RUN_IMG_WIDTH-45;
-                    myHeight = RUN_IMG_HEIGHT-17;
-                    opponentWidth = RUN_IMG_WIDTH-45;
-                    opponentHeight = RUN_IMG_HEIGHT-17;
+                    myWidth = RUN_IMG_WIDTH - 45;
+                    myHeight = RUN_IMG_HEIGHT - 17;
+                    opponentWidth = RUN_IMG_WIDTH - 45;
+                    opponentHeight = RUN_IMG_HEIGHT - 17;
                 }
                 break;
             case RIGHT:
-                if(ClientFrame.userNum==1) { // 나:fireboy 상대방:watergirl
+                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
                     x += 23;
                     y += 10;
-                    myWidth = RUN_IMG_WIDTH-45;
-                    myHeight = RUN_IMG_HEIGHT-17;
-                    opponentWidth = RUN_IMG_WIDTH-45;
-                    opponentHeight = RUN_IMG_HEIGHT-17;
-                }
-                else { // 나:watergirl 상대방:fireboy
+                    myWidth = RUN_IMG_WIDTH - 45;
+                    myHeight = RUN_IMG_HEIGHT - 17;
+                    opponentWidth = RUN_IMG_WIDTH - 45;
+                    opponentHeight = RUN_IMG_HEIGHT - 17;
+                } else { // 나:watergirl 상대방:fireboy
                     x += 30;
                     y += 10;
-                    myWidth = RUN_IMG_WIDTH-45;
-                    myHeight = RUN_IMG_HEIGHT-17;
-                    opponentWidth = RUN_IMG_WIDTH-45;
-                    opponentHeight = RUN_IMG_HEIGHT-17;
+                    myWidth = RUN_IMG_WIDTH - 45;
+                    myHeight = RUN_IMG_HEIGHT - 17;
+                    opponentWidth = RUN_IMG_WIDTH - 45;
+                    opponentHeight = RUN_IMG_HEIGHT - 17;
                 }
                 break;
             case FRONT:
-                if(ClientFrame.userNum==1) { // 나:fireboy 상대방:watergirl
+                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
                     x += 8;
                     y += 8;
-                    myWidth = IMG_WIDTH-30;
-                    myHeight = IMG_HEIGHT-14;
-                    opponentWidth = IMG_WIDTH-30;
-                    opponentHeight = IMG_HEIGHT-14;
-                }
-                else { // 나:watergirl 상대방:fireboy
+                    myWidth = IMG_WIDTH - 30;
+                    myHeight = IMG_HEIGHT - 14;
+                    opponentWidth = IMG_WIDTH - 30;
+                    opponentHeight = IMG_HEIGHT - 14;
+                } else { // 나:watergirl 상대방:fireboy
                     x += 10;
                     y += 8;
-                    myWidth = IMG_WIDTH-30;
-                    myHeight = IMG_HEIGHT-14;
-                    opponentWidth = IMG_WIDTH-30;
-                    opponentHeight = IMG_HEIGHT-14;
+                    myWidth = IMG_WIDTH - 30;
+                    myHeight = IMG_HEIGHT - 14;
+                    opponentWidth = IMG_WIDTH - 30;
+                    opponentHeight = IMG_HEIGHT - 14;
                 }
                 break;
         }
 
-        characterRec = new Rectangle(x,y,myWidth,myHeight);
+        characterRec = new Rectangle(x, y, myWidth, myHeight);
         for (int i = 0; i < blocks.size(); i++) {
             if (characterRec.intersects(blocks.get(i).getRectBlock())) {
-                System.out.println("Collision with block at index " + i);
                 return false;
             }
         }
-        for (int i = 0; i < obstacles.size(); i++) {
-            if (characterRec.intersects(obstacles.get(i).getBarrierRect())) {
-                System.out.println("Collision with obstacle at index " + i);
+        for (int i = 0; i < barriers.size(); i++) {
+            if (characterRec.intersects(barriers.get(i).getBarrierRect())) {
                 return false;
             }
         }
 
-        for(int i=0;i<switchBlocks.size();i++){
-            if (characterRec.intersects(switchBlocks.get(i).getRectButtonBlock()) && switchBlocks.get(i).getIsVisible()) {
+        for (int i = 0; i < buttonBlocks.size(); i++) {
+            if (characterRec.intersects(buttonBlocks.get(i).getRectButtonBlock()) && buttonBlocks.get(i).getIsVisible()) {
                 return false;
             }
         }
-        System.out.println("Movement allowed");
         return true;
     }
 }

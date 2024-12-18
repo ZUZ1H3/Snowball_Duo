@@ -10,7 +10,7 @@ public class ClientFrame extends JFrame {
     public static int userNum; // 첫번째 유저인지, 두번째 유저인지
     public static int waitingPlayerNum; // 게임룸에 몇 명이 기다리고 잇는지
     public static ArrayList<String> playerNames = new ArrayList<String>(); //유저 두명 이름
-    public GameScreenPanel gameScreenPanel = null;
+    public static GameScreenPanel gameScreenPanel = null;
 
     public ClientFrame() {
         setTitle("Snowball Duo - Client");
