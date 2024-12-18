@@ -52,7 +52,7 @@ public class ListenNetwork extends Thread {
                 Object obcm = null;
                 String msg = null;
                 ChatMsg cm = null;
-                //MovingInfo mi = null;
+                MovingInfo mi = null;
                 try {
                     obcm = ois.readObject();
                     System.out.println("obcm read success");
@@ -126,6 +126,14 @@ public class ListenNetwork extends Thread {
                             break;
                     }
                 }
+                else if(mi != null) {
+//					System.out.println(mi);
+//					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
+                    if(ClientFrame.gameScreenPanel!=null)
+                        ClientFrame.gameScreenPanel.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
+                    //break;
+                }
+
             } catch (IOException e) {
                 try {
                     System.out.println("e1");

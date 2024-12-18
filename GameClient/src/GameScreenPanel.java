@@ -37,7 +37,7 @@ public class GameScreenPanel extends JPanel {
             gamePlayPanel = new GamePlayPanel();
             gamePlayPanel.setBounds(0, 0, 800, 600);
             add(gamePlayPanel);
-            //addKeyListener(gamePlayPanel.testKey);
+            addKeyListener(gamePlayPanel.testKey);
             gamePlayPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -56,4 +56,9 @@ public class GameScreenPanel extends JPanel {
         }
         this.repaint();
     }
+    public void setMovingInfo(int x, int y, State type) {
+        if(gamePlayPanel!=null)
+            gamePlayPanel.setMoving(x, y, type);
+    }
+
 }

@@ -85,16 +85,13 @@ public class GamePlayPanel extends JPanel implements Runnable {
     Graphics buffG;
 
     // 플레이어 위치값.
-    int myXpos = 150;
-    int myYpos = 150;
+    int myXpos = 50;
+    int myYpos = 50;
 
-    int opponentXpos = 170;
+    int opponentXpos = 100;
     int opponentYpos = 150;
 
     boolean roof = true;//스레드 루프 정보
-
-    //-------------------------------------------------
-    //
 
     public void gameControll() {
         playerItemGetCheck();
@@ -131,7 +128,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         for (int i = 0; i < items.size(); i++) {//Item m : items
 
             Item m = items.get(i);
-            if (!(m.getMapNumber() % 2 == GameClientFrame.userNum % 2)) continue;
+            if (!(m.getMapNumber() % 2 == ClientFrame.userNum % 2)) continue;
 
             if (((m.getX() <= myXpos && myXpos <= m.getX() + m.getWidth()) || (m.getX() <= myXpos + myWidth && myXpos + myWidth <= m.getX() + m.getWidth()))
                     && ((myYpos <= m.getY() && m.getY() <= myYpos + myHeight) || (myYpos <= m.getY() + m.getHeight() && m.getY() + m.getHeight() <= myYpos + myHeight))) {
@@ -177,7 +174,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
             Barrier o = barriers.get(i);
 
-            if (o.getMapNumber() % 2 == GameClientFrame.userNum % 2) {
+            if (o.getMapNumber() % 2 == ClientFrame.userNum % 2) {
                 continue;
             }
 
@@ -185,9 +182,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
                     (o.getY() <= myYpos + myHeight + 15 && myYpos + myHeight + 10 <= o.getY() + o.getHeight())) {
                 System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 isDie = true;
-                GameClientFrame.net.isPlayingGame = false;
+                ClientFrame.net.isPlayingGame = false;
                 //character = imageTool.getImage(myInfo.getDieImgPath());
-                ListenNetwork.SendObject(new ChatMsg(GameClientFrame.userName, "600", "GameOver")); // GameOver 전송
+                ListenNetwork.SendObject(new ChatMsg(ClientFrame.userName, "600", "GameOver")); // GameOver 전송
                 break;
             } else {
                 continue;
@@ -199,7 +196,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         for (int i = 0; i < doors.size(); i++) {
             Door door = doors.get(i);
 
-            if (door.getMapNumber() % 2 == GameClientFrame.userNum % 2) { // user가 도착했는지 판단
+            if (door.getMapNumber() % 2 == ClientFrame.userNum % 2) { // user가 도착했는지 판단
                 if (myInfo.getState() == State.FRONT && (door.getX() <= myXpos && myXpos <= door.getX() + door.getWidth())
                         && (door.getX() <= myXpos + myWidth && myXpos + myWidth <= door.getX() + door.getWidth())
                         && (door.getY() <= myYpos && myYpos <= door.getY() + door.getHeight())) {
@@ -239,7 +236,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                         stageNum = 2;
                         setMap();
                         initState();
-                        switch (GameClientFrame.userNum) {
+                        switch (ClientFrame.userNum) {
                             case 1:
                                 myXpos = 35;
                                 myYpos = 40;
@@ -318,7 +315,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         setMap();
 
         // 캐릭터 설정
-        switch (GameClientFrame.userNum) {
+        switch (ClientFrame.userNum) {
             case 1:
                 myInfo.setUserNum(1);
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
@@ -362,37 +359,25 @@ public class GamePlayPanel extends JPanel implements Runnable {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         systeminit();
 
-        // testKey 초기화
-        testKey = new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                // 키 입력 처리
-            }
-
-            public void keyReleased(KeyEvent e) {
-                // 키 해제 처리
-            }
-        };
-
         // 키 리스너 등록
-        addKeyListener(testKey);
         setFocusable(true);
         requestFocusInWindow(); // 키 입력을 받기 위한 포커스 설정
 
-        MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, GameClientFrame.userNum, State.FRONT); // gameRoom 입장 시도
+        MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, State.FRONT); // gameRoom 입장 시도
         ListenNetwork.SendObject(obcm);
 
         moveThread.start();
 
         testKey = new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-//            	System.out.println("키가 눌림");
+            	System.out.println("키가 눌림");
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
                         if (!isJumping && !isFalling)
                             isJumping = true;
                         break;
                     case KeyEvent.VK_LEFT:
-//                    	 System.out.println("left 키 눌림 ");
+                    	 System.out.println("left 키 눌림 ");
                         if (isMovingRight)
                             isMovingRight = false;
                         isMovingLeft = true;
@@ -400,7 +385,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                     case KeyEvent.VK_RIGHT:
                         if (!isMovingRight)
                             myXpos -= 10;
-//                    	 System.out.println("right 키 눌림");
+                    	 System.out.println("right 키 눌림");
                         if (isMovingLeft)
                             isMovingLeft = false;
                         isMovingRight = true;
@@ -518,7 +503,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 if (isMovingLeft || isMovingRight)
                     xMoving();
                 playerOnSwitchCheck();
-                MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, GameClientFrame.userNum, myInfo.getState());
+                MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, myInfo.getState());
                 ListenNetwork.SendObject(obcm);
                 try {
                     sleep(30);
@@ -602,7 +587,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
     public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
         switch (myInfo.getState()) {
             case LEFT:
-                if (GameClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
+                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
                     y += 10;
                     myWidth = RUN_IMG_WIDTH - 45;
                     myHeight = RUN_IMG_HEIGHT - 17;
@@ -617,7 +602,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 }
                 break;
             case RIGHT:
-                if (GameClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
+                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
                     x += 23;
                     y += 10;
                     myWidth = RUN_IMG_WIDTH - 45;
@@ -634,7 +619,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 }
                 break;
             case FRONT:
-                if (GameClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
+                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
                     x += 8;
                     y += 8;
                     myWidth = IMG_WIDTH - 30;
@@ -669,7 +654,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 return false;
             }
         }
-
         return true;
     }
 }
