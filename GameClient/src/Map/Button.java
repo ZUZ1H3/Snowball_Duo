@@ -10,6 +10,8 @@ public class Button {
     Image buttonImage = new ImageIcon("GameClient/image/map/button.png").getImage();
     Rectangle rectButton;
     int x, y, width, height;
+    private ButtonBlock manageBlock;
+    private Boolean isSwitchOn = false;
 
     public Button() {
 
@@ -30,6 +32,24 @@ public class Button {
 
     public ImageIcon resizeImage(ImageIcon icon, int width, int height) {
         return new ImageIcon(icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
+    }
+
+    public void setManageBlock(ButtonBlock manageBlock) {
+        this.manageBlock = manageBlock;
+    }
+
+    public void setSwitchState(Boolean value) {
+        this.isSwitchOn = value;
+        manage();
+    }
+
+    public void manage() {
+        if (isSwitchOn) {
+            manageBlock.setVisible(false);
+        }
+        else {
+            manageBlock.setVisible(true);
+        }
     }
 
     public Image getButtonImage() {
