@@ -13,18 +13,19 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class GamePlayPanel extends JPanel implements Runnable {
+    //화면 크기
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
 
-    private final int IMG_WIDTH = 48;
-    private final int IMG_HEIGHT = 59;
-    private final int RUN_IMG_WIDTH = 68;
-    private final int RUN_IMG_HEIGHT = 61;
+    //캐릭터 크기
+    private final int CHARACTER_WIDTH = 34;
+    private final int CHARACTER_HEIGHT = 35;
 
     int myWidth, myHeight;
     int opponentWidth, opponentHeight;
 
     private int stageNum = 1;
+
     private Map map;
     private ArrayList<Block> blocks = null;
     private static ArrayList<Barrier> barriers = null;
@@ -61,9 +62,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
     boolean isOpponentArrive = false;
     boolean isGameClear = false;
 
-    int resetTotalDistance = 90;//90;
+    int resetTotalDistance = 120;
     int jumpingTotalDistance = resetTotalDistance;
-    int jumpingDist = 6;
+    int jumpingDist = 8;
     int fallingDist = 6;
     int xmovingDist = 6;
 
@@ -77,8 +78,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     Image opponent;
     Rectangle characterRec;
 
-    Image openFireDoorImg = imageTool.getImage("GameClient/image/map/peng_door.png");
-    Image openWaterDoorImg = imageTool.getImage("GameClient/image/map/harp_door.png");
+    //Image openPengDoorImg = imageTool.getImage("GameClient/image/map/peng_open_door.png");
+    //Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/harp_open_door.png");
 
     // 이미지 버퍼
     Image buffImg;
@@ -101,14 +102,12 @@ public class GamePlayPanel extends JPanel implements Runnable {
         }
     }
 
-    int pWith = 57;//68;
-    int pHeight = 51;//61;
-
+    // 상대방이 먹은 item 없애기
     public static void removeItem(int i) { // 상대방이 먹은 item 없애기
         items.remove(i);
     }
 
-    public static void switchOn(int i) { // 상대방이 먹은 item 없애기
+    public static void switchOn(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(true);
             isOpponentSwitchOn = true;
@@ -133,7 +132,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
             if (((m.getX() <= myXpos && myXpos <= m.getX() + m.getWidth()) || (m.getX() <= myXpos + myWidth && myXpos + myWidth <= m.getX() + m.getWidth()))
                     && ((myYpos <= m.getY() && m.getY() <= myYpos + myHeight) || (myYpos <= m.getY() + m.getHeight() && m.getY() + m.getHeight() <= myYpos + myHeight))) {
                 items.remove(m);
-                //TODO:네트워크로 사라진 아이템 인덱스 보내줘야함!!
+                //TODO:네트워크로 사라진 아이템 인덱스 보내주기
                 ListenNetwork.SendObject(new ChatMsg("550", i, "ITEM"));
                 break;
             } else
@@ -150,7 +149,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
             if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
 
             if (characterRec.intersects(s.getRectButton())) {
-                //TODO:네트워크로 스위치 눌렸다고 보내줘야함
+                //TODO:네트워크로 스위치 눌렸다고 보내주기
                 //ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
                 s.setSwitchState(true);
                 System.out.println("스위치가 눌렸음");
@@ -180,7 +179,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
             if (((o.getX() + 20 <= myXpos + myWidth && myXpos + myWidth <= o.getX() + o.getWidth() - 20) || (o.getX() + 20 <= myXpos && myXpos <= o.getX() + o.getWidth() - 20)) &&
                     (o.getY() <= myYpos + myHeight + 15 && myYpos + myHeight + 10 <= o.getY() + o.getHeight())) {
-                System.out.println("1  Game Over!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                System.out.println("1  Game Over");
                 isDie = true;
                 ClientFrame.net.isPlayingGame = false;
                 //character = imageTool.getImage(myInfo.getDieImgPath());
@@ -321,30 +320,30 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
                 myInfo.setRunRightImgPath("GameClient/image/character/penguin_ingame.png");
                 myInfo.setRunLeftImgPath("GameClient/image/character/penguin_ingame.png");
-                myXpos = 384;
-                myYpos = 452;
+                myXpos = 650;
+                myYpos = 507;
 
                 opponentInfo.setUserNum(2);
                 opponentInfo.setCharacterImgPath("GameClient/image/character/harp_ingame.png");
                 opponentInfo.setRunRightImgPath("GameClient/image/character/harp_ingame.png");
                 opponentInfo.setRunLeftImgPath("GameClient/image/character/harp_ingame.png");
-                opponentXpos = 288;
-                opponentYpos = 452;
+                opponentXpos = 700;
+                opponentYpos = 507;
                 break;
             case 2:
                 myInfo.setUserNum(2);
                 myInfo.setCharacterImgPath("GameClient/image/character/harp_ingame.png");
                 myInfo.setRunRightImgPath("GameClient/image/character/harp_ingame.png");
                 myInfo.setRunLeftImgPath("GameClient/image/character/harp_ingame.png");
-                myXpos = 288;
-                myYpos = 452;
+                myXpos = 700;
+                myYpos = 507;
 
                 opponentInfo.setUserNum(1);
                 opponentInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
                 opponentInfo.setRunRightImgPath("GameClient/image/character/penguin_ingame.png");
                 opponentInfo.setRunLeftImgPath("GameClient/image/character/penguin_ingame.png");
-                opponentXpos = 384;
-                opponentYpos = 452;
+                opponentXpos = 650;
+                opponentYpos = 507;
                 break;
         }
         character = imageTool.getImage(myInfo.getCharacterImgPath());
@@ -415,8 +414,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int xOffset = 10; // 오른쪽으로 10 픽셀 이동
-        int yOffset = 10;  // 아래로 10 픽셀 이동
+        //int xOffset = 10; // 오른쪽으로 10 픽셀 이동
+        //int yOffset = 10;  // 아래로 10 픽셀 이동
 
         // 배경 이미지 그리기
         if (mapImg != null) {
@@ -434,7 +433,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         if (blocks != null) {
             for (Block block : blocks) {
                 if (block.getBlockImage() != null) {
-                    g.drawImage(block.getBlockImage(), block.getX() + xOffset, block.getY() + yOffset, this);
+                    g.drawImage(block.getBlockImage(), block.getX(), block.getY(), this);
                 } else {
                     System.out.println("Block image is null at X: " + block.getX() + ", Y: " + block.getY());
                 }
@@ -444,7 +443,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         if (barriers != null) {
             for (Barrier barrier : barriers) {
                 if (barrier.getBarrierImage() != null) {
-                    g.drawImage(barrier.getBarrierImage(), barrier.getX() + xOffset, barrier.getY() + yOffset, this);
+                    g.drawImage(barrier.getBarrierImage(), barrier.getX(), barrier.getY(), this);
                 } else {
                     System.out.println("Barrier image is null at X: " + barrier.getX() + ", Y: " + barrier.getY());
                 }
@@ -453,7 +452,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         if (items != null) {
             for (Item item : items) {
                 if (item.getItemImage() != null) {
-                    g.drawImage(item.getItemImage(), item.getX() + xOffset, item.getY() + yOffset, this);
+                    g.drawImage(item.getItemImage(), item.getX(), item.getY(), this);
                 } else {
                     System.out.println("Item image is null at X: " + item.getX() + ", Y: " + item.getY());
                 }
@@ -463,7 +462,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         if (doors != null) {
             for (Door door : doors) {
                 if (door.getDoorImage() != null) {
-                    g.drawImage(door.getDoorImage(), door.getX() + xOffset, door.getY() + yOffset, this);
+                    g.drawImage(door.getDoorImage(), door.getX(), door.getY(), this);
                 } else {
                     System.out.println("Door image is null at X: " + door.getX() + ", Y: " + door.getY());
                 }
@@ -472,7 +471,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         if (buttons != null) {
             for (Button button : buttons) {
                 if (button.getButtonImage() != null) {
-                    g.drawImage(button.getButtonImage(), button.getX() + 5 + xOffset, button.getY() + yOffset, this);
+                    g.drawImage(button.getButtonImage(), button.getX() + 5, button.getY(), this);
                 } else {
                     System.out.println("Button image is null at X: " + button.getX() + ", Y: " + button.getY());
                 }
@@ -481,7 +480,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         if (buttonBlocks != null) {
             for (ButtonBlock buttonBlock : buttonBlocks) {
                 if (buttonBlock.getButtonBlockImage() != null) {
-                    g.drawImage(buttonBlock.getButtonBlockImage(), buttonBlock.getX() + xOffset, buttonBlock.getY() + yOffset, this);
+                    g.drawImage(buttonBlock.getButtonBlockImage(), buttonBlock.getX(), buttonBlock.getY(), this);
                 } else {
                     System.out.println("ButtonBlock image is null at X: " + buttonBlock.getX() + ", Y: " + buttonBlock.getY());
                 }
@@ -585,75 +584,31 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
-        switch (myInfo.getState()) {
-            case LEFT:
-                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
-                    y += 10;
-                    myWidth = RUN_IMG_WIDTH - 45;
-                    myHeight = RUN_IMG_HEIGHT - 17;
-                    opponentWidth = RUN_IMG_WIDTH - 45;
-                    opponentHeight = RUN_IMG_HEIGHT - 17;
-                } else { // 나:watergirl 상대방:fireboy
-                    y += 10;
-                    myWidth = RUN_IMG_WIDTH - 45;
-                    myHeight = RUN_IMG_HEIGHT - 17;
-                    opponentWidth = RUN_IMG_WIDTH - 45;
-                    opponentHeight = RUN_IMG_HEIGHT - 17;
-                }
-                break;
-            case RIGHT:
-                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
-                    x += 23;
-                    y += 10;
-                    myWidth = RUN_IMG_WIDTH - 45;
-                    myHeight = RUN_IMG_HEIGHT - 17;
-                    opponentWidth = RUN_IMG_WIDTH - 45;
-                    opponentHeight = RUN_IMG_HEIGHT - 17;
-                } else { // 나:watergirl 상대방:fireboy
-                    x += 30;
-                    y += 10;
-                    myWidth = RUN_IMG_WIDTH - 45;
-                    myHeight = RUN_IMG_HEIGHT - 17;
-                    opponentWidth = RUN_IMG_WIDTH - 45;
-                    opponentHeight = RUN_IMG_HEIGHT - 17;
-                }
-                break;
-            case FRONT:
-                if (ClientFrame.userNum == 1) { // 나:fireboy 상대방:watergirl
-                    x += 8;
-                    y += 8;
-                    myWidth = IMG_WIDTH - 30;
-                    myHeight = IMG_HEIGHT - 14;
-                    opponentWidth = IMG_WIDTH - 30;
-                    opponentHeight = IMG_HEIGHT - 14;
-                } else { // 나:watergirl 상대방:fireboy
-                    x += 10;
-                    y += 8;
-                    myWidth = IMG_WIDTH - 30;
-                    myHeight = IMG_HEIGHT - 14;
-                    opponentWidth = IMG_WIDTH - 30;
-                    opponentHeight = IMG_HEIGHT - 14;
-                }
-                break;
-        }
+        myWidth = CHARACTER_WIDTH;
+        myHeight = CHARACTER_HEIGHT;
+        opponentWidth = CHARACTER_WIDTH;
+        opponentHeight = CHARACTER_HEIGHT;
 
         characterRec = new Rectangle(x, y, myWidth, myHeight);
-        for (int i = 0; i < blocks.size(); i++) {
-            if (characterRec.intersects(blocks.get(i).getRectBlock())) {
-                return false;
-            }
-        }
-        for (int i = 0; i < barriers.size(); i++) {
-            if (characterRec.intersects(barriers.get(i).getBarrierRect())) {
+
+        for (Block block : blocks) {
+            if (characterRec.intersects(block.getRectBlock())) {
                 return false;
             }
         }
 
-        for (int i = 0; i < buttonBlocks.size(); i++) {
-            if (characterRec.intersects(buttonBlocks.get(i).getRectButtonBlock()) && buttonBlocks.get(i).getIsVisible()) {
+        for (Barrier barrier : barriers) {
+            if (characterRec.intersects(barrier.getBarrierRect())) {
                 return false;
             }
         }
+
+        for (ButtonBlock buttonBlock : buttonBlocks) {
+            if (characterRec.intersects(buttonBlock.getRectButtonBlock()) && buttonBlock.getIsVisible()) {
+                return false;
+            }
+        }
+
         return true;
     }
 }
