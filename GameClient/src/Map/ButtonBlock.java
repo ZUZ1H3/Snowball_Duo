@@ -11,6 +11,7 @@ public class ButtonBlock {
     Rectangle rectButtonBlock;
 
     int x, y, width, height;
+    private Boolean isVisible = true;
 
     public ButtonBlock() {
 
@@ -32,6 +33,9 @@ public class ButtonBlock {
     public ImageIcon resizeImage(ImageIcon icon, int width, int height) {
         return new ImageIcon(icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
+
+    public void setVisible(Boolean value) {isVisible = value;}
+    public Boolean getIsVisible() {return isVisible;}
 
     public Image getButtonBlockImage() {
         return buttonBlockImage;
