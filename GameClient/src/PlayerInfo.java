@@ -6,7 +6,7 @@ public class PlayerInfo {
     String characterImgPath;
     String runRightImgPath;
     String runLeftImgPath;
-    String dieImgPath = "GameClient/image/character/harp_ingame.png";
+    String dieImgPath = "GameClient/image/character/die.png";
     State type;
 
     public PlayerInfo() {

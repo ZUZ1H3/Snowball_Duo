@@ -19,7 +19,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
     //캐릭터 크기
     private final int CHARACTER_WIDTH = 34;
-    private final int CHARACTER_HEIGHT = 35;
+    private final int CHARACTER_HEIGHT = 34;
 
     int myWidth, myHeight;
     int opponentWidth, opponentHeight;
@@ -78,8 +78,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     Image opponent;
     Rectangle characterRec;
 
-    //Image openPengDoorImg = imageTool.getImage("GameClient/image/map/peng_open_door.png");
-    //Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/harp_open_door.png");
+    Image openPengDoorImg = imageTool.getImage("GameClient/image/map/open_door.png");
+    Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/open_door.png");
 
     // 이미지 버퍼
     Image buffImg;
@@ -105,22 +105,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
     // 상대방이 먹은 item 없애기
     public static void removeItem(int i) { // 상대방이 먹은 item 없애기
         items.remove(i);
-    }
-
-    public static void switchOn(int i) {
-        if (buttons != null) {
-            buttons.get(i).setSwitchState(true);
-            isOpponentSwitchOn = true;
-            opponentlastSwitchIdx = i;
-        }
-    }
-
-    public static void switchOff(int i) {
-        if (buttons != null) {
-            buttons.get(i).setSwitchState(false);
-            isOpponentSwitchOn = false;
-            opponentlastSwitchIdx = -1;
-        }
     }
 
     public void playerItemGetCheck() {
@@ -157,36 +141,40 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 mylastOnSwitchIdx = i;
                 ListenNetwork.SendObject(new ChatMsg( "550", i, "SWITCH_ON"));
                 break;
-            } else if (isMySwitchOn && mylastOnSwitchIdx == i) {
+            }
+
+            else if (isMySwitchOn && mylastOnSwitchIdx == i) {
                 System.out.println("스위치가 안눌림");
                 isMySwitchOn = false;
                 mylastOnSwitchIdx = -1;
                 ListenNetwork.SendObject(new ChatMsg( "550", i, "SWITCH_OFF"));
                 s.setSwitchState(false);
             }
-
         }
     }
 
     public void playerObstacleCheck() {
-        for (int i = 0; i < barriers.size(); i++) {//Item m : items
-
+        for (int i = 0; i < barriers.size(); i++) {
             Barrier o = barriers.get(i);
 
-            if (o.getMapNumber() % 2 == ClientFrame.userNum % 2) {
-                continue;
-            }
+            // -1인 장애물이거나 유저 번호가 맞는 장애물일 때만 체크
+            if (o.getMapNumber() == -1 || o.getMapNumber() % 2 == ClientFrame.userNum % 2) {
+                // 캐릭터가 장애물 바로 위에 있는지 확인
+                boolean isDirectlyAbove = Math.abs((myYpos + myHeight) - o.getY()) <= 5;
 
-            if (((o.getX() + 20 <= myXpos + myWidth && myXpos + myWidth <= o.getX() + o.getWidth() - 20) || (o.getX() + 20 <= myXpos && myXpos <= o.getX() + o.getWidth() - 20)) &&
-                    (o.getY() <= myYpos + myHeight + 15 && myYpos + myHeight + 10 <= o.getY() + o.getHeight())) {
-                System.out.println("1  Game Over");
-                isDie = true;
-                ClientFrame.net.isPlayingGame = false;
-                //character = imageTool.getImage(myInfo.getDieImgPath());
-                ListenNetwork.SendObject(new ChatMsg(ClientFrame.userName, "600", "GameOver")); // GameOver 전송
-                break;
-            } else {
-                continue;
+                // 캐릭터의 x좌표가 장애물의 x범위 안에 실제로 들어가있는지 확인
+                boolean xOverlap = (myXpos + (myWidth/2) >= o.getX()) &&
+                        (myXpos + (myWidth/2) <= o.getX() + o.getWidth());
+
+                if (isDirectlyAbove && xOverlap) {
+                    System.out.println("----------Game Over----------");
+                    isDie = true;
+                    ClientFrame.net.isPlayingGame = false;
+                    character = imageTool.getImage(myInfo.getDieImgPath());
+                    repaint();
+                    ListenNetwork.SendObject(new ChatMsg(ClientFrame.userName, "600", "GameOver"));
+                    break;
+                }
             }
         }
     }
@@ -213,8 +201,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
                     isOpponentArrive = false;
                 }
             }
-
-
         }
     }
 
@@ -232,25 +218,25 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 } else if (isGameClear) {
                     if (stageNum == 1) {
                         Thread.sleep(1100);
-                        stageNum = 2;
+                        //stageNum = 2;
                         setMap();
                         initState();
-                        switch (ClientFrame.userNum) {
-                            case 1:
-                                myXpos = 35;
-                                myYpos = 40;
-
-                                opponentXpos = 35;
-                                opponentYpos = 130;
-                                break;
-                            case 2:
-                                myXpos = 35;
-                                myYpos = 130;
-
-                                opponentXpos = 35;
-                                opponentYpos = 40;
-                                break;
-                        }
+//                        switch (ClientFrame.userNum) {
+//                            case 1:
+//                                myXpos = 35;
+//                                myYpos = 40;
+//
+//                                opponentXpos = 35;
+//                                opponentYpos = 130;
+//                                break;
+//                            case 2:
+//                                myXpos = 35;
+//                                myYpos = 130;
+//
+//                                opponentXpos = 35;
+//                                opponentYpos = 40;
+//                                break;
+//                        }
                     } else {
                         Thread.sleep(700);
                         break;
@@ -264,6 +250,11 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 if (status != 4) cnt++;
             }
 
+            //gameoverpanel로 이동
+            if( isDie || isOpponentDie ) {
+                ClientFrame.isChanged = true;
+                ClientFrame.isGameOverPanel = true;
+            }
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -390,7 +381,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                         isMovingRight = true;
                         break;
                 }
-                repaint(); // 화면 갱신
+                //repaint(); // 화면 갱신
             }
 
             @Override
@@ -404,88 +395,82 @@ public class GamePlayPanel extends JPanel implements Runnable {
                         isMovingLeft = false;
                         break;
                 }
-                repaint(); // 화면 갱신
+                //repaint(); // 화면 갱신
             }
         };
     }
 
+    public void paint(Graphics g) {
+        buffImg = createImage(getWidth(), getHeight());
+        buffG = buffImg.getGraphics();
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        update(g);
+    }
 
-        //int xOffset = 10; // 오른쪽으로 10 픽셀 이동
-        //int yOffset = 10;  // 아래로 10 픽셀 이동
+    public void update(Graphics g) {
+        buffG.clearRect(0, 0, WIDTH, HEIGHT);
+        buffG.drawImage(mapImg, 0, 0, this);
 
-        // 배경 이미지 그리기
-        if (mapImg != null) {
-            g.drawImage(mapImg, 0, 0, WIDTH, HEIGHT, this);
+        for (Block block : blocks)
+            buffG.drawImage(block.getBlockImage(),block.getX(),block.getY(),this);
+
+        for (Item item : items)
+            buffG.drawImage(item.getItemImage(),item.getX(),item.getY(),this);
+
+        for (Barrier obstacle : barriers)
+            buffG.drawImage(obstacle.getBarrierImage(),obstacle.getX(),obstacle.getY(),this);
+
+
+        for (Door door : doors)
+            buffG.drawImage(door.getDoorImage(),door.getX(),door.getY(),this);
+
+        for (ButtonBlock switchBlock:buttonBlocks) {
+            //if (switchBlock.getIsVisible())
+                buffG.drawImage(switchBlock.getButtonBlockImage(),switchBlock.getX(),switchBlock.getY(),this);
         }
 
-        // 캐릭터 이미지 그리기
-        g.drawImage(character, myXpos, myYpos, this);
-
-        // 상대 캐릭터 이미지 그리기
-        g.drawImage(opponent, opponentXpos, opponentYpos, this);
-
-
-        // 블록 그리기
-        if (blocks != null) {
-            for (Block block : blocks) {
-                if (block.getBlockImage() != null) {
-                    g.drawImage(block.getBlockImage(), block.getX(), block.getY(), this);
-                } else {
-                    System.out.println("Block image is null at X: " + block.getX() + ", Y: " + block.getY());
-                }
+        for (Button switchBtn: buttons) {
+            if (switchBtn.isVisible()) {  // 버튼이 보일 때만 그리기
+                buffG.drawImage(switchBtn.getButtonImage(), switchBtn.getX(), switchBtn.getY(), this);
             }
         }
-        //장애물 그리기
-        if (barriers != null) {
-            for (Barrier barrier : barriers) {
-                if (barrier.getBarrierImage() != null) {
-                    g.drawImage(barrier.getBarrierImage(), barrier.getX(), barrier.getY(), this);
-                } else {
-                    System.out.println("Barrier image is null at X: " + barrier.getX() + ", Y: " + barrier.getY());
+
+
+        if(!(isArrive&&isOpponentArrive)) { // 모두 도착 X
+            buffG.drawImage(character, myXpos, myYpos, this);
+//          System.out.println("draw character ==> "+character.toString());
+
+            if(!isOpponentDie) {
+                switch(opponentInfo.getState()) {
+                    case LEFT:
+                        opponent = imageTool.getImage(opponentInfo.getRunLeftImgPath());
+                        break;
+                    case RIGHT:
+                        opponent = imageTool.getImage(opponentInfo.getRunRightImgPath());
+                        break;
+                    case FRONT:
+                        opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
+                        break;
                 }
             }
+
+            buffG.drawImage(opponent, opponentXpos, opponentYpos, this);
         }
-        if (items != null) {
-            for (Item item : items) {
-                if (item.getItemImage() != null) {
-                    g.drawImage(item.getItemImage(), item.getX(), item.getY(), this);
-                } else {
-                    System.out.println("Item image is null at X: " + item.getX() + ", Y: " + item.getY());
+        else { // 모두 도착한 경우
+            for(Door door:doors) {
+                if(door.getMapNumber()%2==0) {
+                    buffG.drawImage(openPengDoorImg,door.getX(),door.getY(),this);
+                }
+                else {
+                    buffG.drawImage(openHarpDoorImg,door.getX(),door.getY(),this);
                 }
             }
+            isGameClear = true;
+
         }
-        //문 그리기
-        if (doors != null) {
-            for (Door door : doors) {
-                if (door.getDoorImage() != null) {
-                    g.drawImage(door.getDoorImage(), door.getX(), door.getY(), this);
-                } else {
-                    System.out.println("Door image is null at X: " + door.getX() + ", Y: " + door.getY());
-                }
-            }
-        }
-        if (buttons != null) {
-            for (Button button : buttons) {
-                if (button.getButtonImage() != null) {
-                    g.drawImage(button.getButtonImage(), button.getX() + 5, button.getY(), this);
-                } else {
-                    System.out.println("Button image is null at X: " + button.getX() + ", Y: " + button.getY());
-                }
-            }
-        }
-        if (buttonBlocks != null) {
-            for (ButtonBlock buttonBlock : buttonBlocks) {
-                if (buttonBlock.getButtonBlockImage() != null) {
-                    g.drawImage(buttonBlock.getButtonBlockImage(), buttonBlock.getX(), buttonBlock.getY(), this);
-                } else {
-                    System.out.println("ButtonBlock image is null at X: " + buttonBlock.getX() + ", Y: " + buttonBlock.getY());
-                }
-            }
-        }
+
+        g.drawImage(buffImg,0,0,this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
+        repaint();
     }
 
     private class MoveThread extends Thread {

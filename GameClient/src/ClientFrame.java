@@ -12,6 +12,9 @@ public class ClientFrame extends JFrame {
     public static ArrayList<String> playerNames = new ArrayList<String>(); //유저 두명 이름
     public static GameScreenPanel gameScreenPanel = null;
 
+    public static boolean isGameOverPanel;
+    public static boolean isGameClearPanel;
+
     public ClientFrame() {
         setTitle("Snowball Duo - Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,6 +82,11 @@ public class ClientFrame extends JFrame {
         else if (isPlayingScreen) {
             isPlayingScreen = false;
             gameScreenPanel.changeToPlaypanel();
+        }
+        else if (isGameOverPanel) {
+            System.out.println("게임 오버 화면으로 전환되어야함");
+            isGameOverPanel = false;
+            gameScreenPanel.changeToGameOverPanel();
         }
         revalidate();
         repaint();

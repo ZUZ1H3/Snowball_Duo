@@ -12,6 +12,7 @@ public class ButtonBlock {
 
     int x, y, width, height;
     private Boolean isVisible = true;
+    private int originalY; // 원래 y좌표 저장용 변수 추가
 
     public ButtonBlock() {
 
@@ -20,10 +21,21 @@ public class ButtonBlock {
     public ButtonBlock(int x, int y) {
         this.x = x;
         this.y= y;
+        this.originalY = y;
         this.width = BUTTON_WIDTH;
         this.height = BUTTON_HEIGHT;
         this.rectButtonBlock = new Rectangle(x,y,width,height);
         setButtonBlockImage();
+    }
+
+    public void moveDown() {
+        this.y = this.originalY + 34; // y좌표를 34만큼 아래로
+        rectButtonBlock.setLocation(x, y);
+    }
+
+    public void moveUp() {
+        this.y = this.originalY; // 원래 y좌표로 복귀
+        rectButtonBlock.setLocation(x, y);
     }
 
     public void setButtonBlockImage() {

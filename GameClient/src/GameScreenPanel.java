@@ -7,6 +7,7 @@ public class GameScreenPanel extends JPanel {
 
     public WaitingPanel waitingPanel;
     private GamePlayPanel gamePlayPanel = null;
+    private GameOverPanel gameOverPanel = null;
     private ChatPanel chatPanel;
     private String userName;
 
@@ -56,6 +57,17 @@ public class GameScreenPanel extends JPanel {
         }
         this.repaint();
     }
+
+    public void changeToGameOverPanel() {
+        remove(gamePlayPanel);
+        if(gameOverPanel == null) {
+            gameOverPanel = new GameOverPanel();
+            gameOverPanel.setBounds(0, 0, gameOverPanel.getWidth(), gameOverPanel.getHeight());
+            add(gameOverPanel);
+        }
+        this.repaint();
+    }
+
     public void setMovingInfo(int x, int y, State type) {
         if(gamePlayPanel!=null)
             gamePlayPanel.setMoving(x, y, type);

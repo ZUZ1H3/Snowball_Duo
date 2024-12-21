@@ -12,6 +12,7 @@ public class Button {
     int x, y, width, height;
     private ButtonBlock manageBlock;
     private Boolean isSwitchOn = false;
+    private boolean isVisible = true; // 추가: 버튼의 가시성을 위한 변수
 
     public Button() {
 
@@ -40,16 +41,25 @@ public class Button {
 
     public void setSwitchState(Boolean value) {
         this.isSwitchOn = value;
+        if (value) {
+            this.isVisible = false; // 스위치가 켜지면 보이지 않게
+        } else {
+            this.isVisible = true;  // 스위치가 꺼지면 다시 보이게
+        }
         manage();
     }
 
     public void manage() {
         if (isSwitchOn) {
-            manageBlock.setVisible(false);
+            manageBlock.moveDown(); // y좌표를 34만큼 내리는 메소드 호출
+        } else {
+            manageBlock.moveUp();   // 원래 위치로 돌아가는 메소드 호출
         }
-        else {
-            manageBlock.setVisible(true);
-        }
+    }
+
+    // 버튼의 가시성을 확인하는 메소드 추가
+    public boolean isVisible() {
+        return isVisible;
     }
 
     public Image getButtonImage() {
