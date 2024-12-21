@@ -224,7 +224,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         try {
             while (roof) {
                 pretime = System.currentTimeMillis();
-                //게임 컨트롤
+                gameControll();
                 if (isDie || isOpponentDie) {
                     //죽은 경우 -> 스레드 종료
                     Thread.sleep(1000);
