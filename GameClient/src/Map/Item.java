@@ -25,10 +25,10 @@ public class Item {
 
     public void setItemImage() {
         if(mapNumber%2 == 0) { //물고기
-            itemImage = resizeImage(new ImageIcon("GameClient/image/map/peng_item.png"), ITEM_WIDTH, ITEM_WIDTH).getImage();
+            itemImage = resizeImage(new ImageIcon("GameClient/image/map/harp_item.png"), ITEM_WIDTH, ITEM_WIDTH).getImage();
         }
         else {
-            itemImage = resizeImage(new ImageIcon("GameClient/image/map/harp_item.png"), ITEM_WIDTH, ITEM_WIDTH).getImage();
+            itemImage = resizeImage(new ImageIcon("GameClient/image/map/peng_item.png"), ITEM_WIDTH, ITEM_WIDTH).getImage();
         }
     }
 
