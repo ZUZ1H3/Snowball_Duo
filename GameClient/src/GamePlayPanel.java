@@ -320,10 +320,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
             //gameoverpanel로 이동
             if( isDie || isOpponentDie ) {
-                moveThread.interrupt();
-                ClientFrame.net.isPlayingGame = false;
                 ClientFrame.isChanged = true;
-                ClientFrame.isGameClearPanel = true;
+                ClientFrame.isGameOverPanel = true;
             }
 
             else if (isGameClear) {
