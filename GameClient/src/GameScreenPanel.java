@@ -9,6 +9,7 @@ public class GameScreenPanel extends JPanel {
     private GamePlayPanel gamePlayPanel = null;
     private GameOverPanel gameOverPanel = null;
     private ChatPanel chatPanel;
+    private GameClearPanel gameClearPanel;
     private String userName;
 
     public GameScreenPanel(ClientFrame clientFrame, String userName) {
@@ -64,6 +65,16 @@ public class GameScreenPanel extends JPanel {
             gameOverPanel = new GameOverPanel();
             gameOverPanel.setBounds(0, 0, 800, 600);
             add(gameOverPanel);
+        }
+        this.repaint();
+    }
+
+    public void changeToGameClearPanel(int fishCount, int shellCount) {
+        remove(gamePlayPanel);
+        if(gameClearPanel == null) {
+            gameClearPanel = new GameClearPanel(fishCount, shellCount);
+            gameClearPanel.setBounds(0, 0, 800, 600);
+            add(gameClearPanel);
         }
         this.repaint();
     }

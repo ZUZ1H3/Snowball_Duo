@@ -6,13 +6,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.swing.JOptionPane;
-
+import Map.Item;
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
     String ip_addr = "127.0.0.1";
     int port;
     int playerCharacter = 0;
-
     private static final String ALLOW_LOGIN_MSG = "ALLOW";
     private static final String DENY_LOGIN_MSG = "DENY";
 
@@ -130,8 +129,23 @@ public class ListenNetwork extends Thread {
                             break;
 
                         case "550":
-                            if(cm.getObjType().equals("ITEM"))
-                                GamePlayPanel.removeItem(cm.getObjIdx());
+                            if (cm.getObjType().equals("ITEM")) {
+                                int itemIdx = cm.getObjIdx();  // 아이템의 인덱스를 받아오기
+                                Item item = GamePlayPanel.getItemByIndex(itemIdx);  // 아이템 객체 찾기
+
+                                if (item != null) {
+                                    // mapNumber로 물고기인지 조개인지 구분
+                                    if (item.getMapNumber() % 2 == 0) {
+                                        GamePlayPanel.removeItem(itemIdx);
+                                        ClientFrame.harpSealItemCount++;
+                                    } else {  // 펭귄 아이템(조개)
+                                        GamePlayPanel.removeItem(itemIdx);
+                                        ClientFrame.penguinItemCount++;
+                                    }
+                                } else {
+                                    System.out.println("아이템을 찾을 수 없습니다.");
+                                }
+                            }
                             else if (cm.getObjType().equals("SWITCH_ON")) {
                                 GamePlayPanel.switchOn(cm.getObjIdx());
                                 GamePlayPanel.moveButtonBlocksDown(); // ButtonBlock 내리기

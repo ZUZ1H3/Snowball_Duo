@@ -15,6 +15,8 @@ public class ClientFrame extends JFrame {
     public static boolean isGameOverPanel;
     public static boolean isGameClearPanel;
 
+    public static int penguinItemCount = 0; // 획득한 물고기 개수
+    public static int harpSealItemCount = 0; // 획득한 조개 개수
     public ClientFrame() {
         setTitle("Snowball Duo - Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,6 +89,11 @@ public class ClientFrame extends JFrame {
             System.out.println("게임 오버 화면으로 전환되어야함");
             isGameOverPanel = false;
             gameScreenPanel.changeToGameOverPanel();
+        }
+        else if (isGameClearPanel) {
+            System.out.println("게임 클리어 화면으로 전환되어야함");
+            isGameClearPanel = false;
+            gameScreenPanel.changeToGameClearPanel(penguinItemCount, harpSealItemCount);
         }
         revalidate();
         repaint();

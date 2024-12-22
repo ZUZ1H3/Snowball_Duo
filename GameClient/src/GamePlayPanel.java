@@ -149,8 +149,15 @@ public class GamePlayPanel extends JPanel implements Runnable {
             if (((m.getX() <= myXpos && myXpos <= m.getX() + m.getWidth()) || (m.getX() <= myXpos + myWidth && myXpos + myWidth <= m.getX() + m.getWidth()))
                     && ((myYpos <= m.getY() && m.getY() <= myYpos + myHeight) || (myYpos <= m.getY() + m.getHeight() && m.getY() + m.getHeight() <= myYpos + myHeight))) {
                 items.remove(m);
+                if (m.getMapNumber() % 2 == 0) {
+                    ClientFrame.harpSealItemCount++;
+                } else {
+                    ClientFrame.penguinItemCount++;
+                }
+
                 //TODO:네트워크로 사라진 아이템 인덱스 보내주기
                 ListenNetwork.SendObject(new ChatMsg("550", i, "ITEM"));
+
                 break;
             } else
                 continue;
@@ -215,6 +222,15 @@ public class GamePlayPanel extends JPanel implements Runnable {
         }
     }
 
+    public static Item getItemByIndex(int idx) {
+        // 아이템 리스트에서 인덱스에 해당하는 아이템을 찾음
+        if (idx >= 0 && idx < items.size()) {
+            return items.get(idx);  // 아이템 반환
+        }
+        return null;  // 아이템이 없으면 null 반환
+    }
+
+
     public void playerArriveCheck() {
         for (int i = 0; i < doors.size(); i++) {
             Door door = doors.get(i);
@@ -256,6 +272,20 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 } else if (isGameClear) {
                     if (stageNum == 1) {
                         Thread.sleep(1100);
+                        ClientFrame.isChanged = true;
+                        ClientFrame.isGameClearPanel = true;  // 클리어 화면 표시
+
+                        while (ClientFrame.isGameClearPanel) {
+                            // 대기 상태로 유지
+                            Thread.sleep(100);
+                        }
+
+                        // 클리어 버튼을 누르면 두 번째 스테이지로 넘어간다
+                        if (ClientFrame.isGameClearPanel == false) {
+                            stageNum = 2;  // 두 번째 스테이지로 변경
+                            setMap();  // 두 번째 스테이지 맵 설정
+                            initState();  // 두 번째 스테이지 초기화
+                        }
                         //stageNum = 2;
                         //setMap();
                         //initState();
@@ -290,16 +320,18 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
             //gameoverpanel로 이동
             if( isDie || isOpponentDie ) {
+                moveThread.interrupt();
+                ClientFrame.net.isPlayingGame = false;
                 ClientFrame.isChanged = true;
-                ClientFrame.isGameOverPanel = true;
+                ClientFrame.isGameClearPanel = true;
             }
 
-//            else if (isGameClear) {
-//                moveThread.interrupt();
-//                ClientFrame.net.isPlayingGame = false;
-//                ClientFrame.isChanged = true;
-//                ClientFrame.isGameScreen = true;
-//            }
+            else if (isGameClear) {
+                moveThread.interrupt();
+                ClientFrame.net.isPlayingGame = false;
+                ClientFrame.isChanged = true;
+                ClientFrame.isGameClearPanel = true;
+            }
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
