@@ -22,11 +22,11 @@ public class Door {
     }
 
     public void setDoorImage() {
-        if(mapNumber%2 == 0) { //6=펭귄문
-            doorImage = resizeImage(new ImageIcon("GameClient/image/map/peng_door.png"), DOOR_WIDTH, DOOR_HEIGHT).getImage();
-        }
-        else { //물범문
+        if(mapNumber%2 == 0) { //6=물범문
             doorImage = resizeImage(new ImageIcon("GameClient/image/map/harp_door.png"), DOOR_WIDTH, DOOR_HEIGHT).getImage();
+        }
+        else { //펭귄문
+            doorImage = resizeImage(new ImageIcon("GameClient/image/map/peng_door.png"), DOOR_WIDTH, DOOR_HEIGHT).getImage();
         }
     }
 
