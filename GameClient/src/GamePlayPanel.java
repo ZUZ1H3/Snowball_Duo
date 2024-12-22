@@ -97,9 +97,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
     public void gameControll() {
         playerItemGetCheck();
         playerObstacleCheck();
-        if (items.size() == 0) {
+        //if (items.size() == 0) {
             playerArriveCheck();
-        }
+        //}
     }
 
     // 상대방이 먹은 item 없애기
@@ -223,6 +223,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 if (myInfo.getState() == State.FRONT && (door.getX() <= myXpos && myXpos <= door.getX() + door.getWidth())
                         && (door.getX() <= myXpos + myWidth && myXpos + myWidth <= door.getX() + door.getWidth())
                         && (door.getY() <= myYpos && myYpos <= door.getY() + door.getHeight())) {
+                    System.out.println("----------------문에 도착--------------");
                     isArrive = true;
                 } else {
                     isArrive = false;
@@ -232,6 +233,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 if (opponentInfo.getState() == State.FRONT && (door.getX() <= opponentXpos && opponentXpos <= door.getX() + door.getWidth())
                         && (door.getX() <= opponentXpos + opponentWidth && opponentXpos + opponentWidth <= door.getX() + door.getWidth())
                         && (door.getY() <= opponentYpos && opponentYpos <= door.getY() + door.getHeight())) {
+                    System.out.println("-----------상대-----문에 도착--------------");
                     isOpponentArrive = true;
                 } else {
                     isOpponentArrive = false;
@@ -255,8 +257,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
                     if (stageNum == 1) {
                         Thread.sleep(1100);
                         //stageNum = 2;
-                        setMap();
-                        initState();
+                        //setMap();
+                        //initState();
 //                        switch (ClientFrame.userNum) {
 //                            case 1:
 //                                myXpos = 35;
@@ -291,6 +293,13 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 ClientFrame.isChanged = true;
                 ClientFrame.isGameOverPanel = true;
             }
+
+//            else if (isGameClear) {
+//                moveThread.interrupt();
+//                ClientFrame.net.isPlayingGame = false;
+//                ClientFrame.isChanged = true;
+//                ClientFrame.isGameScreen = true;
+//            }
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -495,10 +504,10 @@ public class GamePlayPanel extends JPanel implements Runnable {
         else { // 모두 도착한 경우
             for(Door door:doors) {
                 if(door.getMapNumber()%2==0) {
-                    buffG.drawImage(openPengDoorImg,door.getX(),door.getY(),this);
+                    buffG.drawImage(openHarpDoorImg,door.getX(),door.getY(),this);
                 }
                 else {
-                    buffG.drawImage(openHarpDoorImg,door.getX(),door.getY(),this);
+                    buffG.drawImage(openPengDoorImg,door.getX(),door.getY(),this);
                 }
             }
             isGameClear = true;
