@@ -8,6 +8,7 @@ public class PlayerInfo {
     String runLeftImgPath;
     String dieImgPath = "GameClient/image/character/die.png";
     State type;
+    String jumpLeftImgPath;
 
     public PlayerInfo() {
         this.type = State.FRONT;
@@ -37,6 +38,10 @@ public class PlayerInfo {
         this.type = type;
     }
 
+    public void setJumpImgPath(String jumpLeftImgPath) {  // 왼쪽 점프 이미지 경로 설정
+        this.jumpLeftImgPath = jumpLeftImgPath;
+    }
+
 //	public Image getCharacter() {
 //	   return character;
 //	}
@@ -55,6 +60,10 @@ public class PlayerInfo {
 
     public String getDieImgPath() {
         return dieImgPath;
+    }
+
+    public String getJumpImgPath() {
+        return jumpLeftImgPath;
     }
 
     public State getState() {

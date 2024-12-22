@@ -386,6 +386,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
                 myInfo.setRunRightImgPath("GameClient/image/character/penguin_right.png");
                 myInfo.setRunLeftImgPath("GameClient/image/character/penguin_left.png");
+                myInfo.setJumpImgPath("GameClient/image/character/penguin_jump_left.png");
                 myXpos = 650;
                 myYpos = 507;
 
@@ -393,6 +394,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 opponentInfo.setCharacterImgPath("GameClient/image/character/harp_ingame.png");
                 opponentInfo.setRunRightImgPath("GameClient/image/character/harp_right.png");
                 opponentInfo.setRunLeftImgPath("GameClient/image/character/harp_left.png");
+                opponentInfo.setJumpImgPath("GameClient/image/character/harp_jump.png");
+
                 opponentXpos = 700;
                 opponentYpos = 507;
                 break;
@@ -401,6 +404,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 myInfo.setCharacterImgPath("GameClient/image/character/harp_ingame.png");
                 myInfo.setRunRightImgPath("GameClient/image/character/harp_right.png");
                 myInfo.setRunLeftImgPath("GameClient/image/character/harp_left.png");
+                myInfo.setJumpImgPath("GameClient/image/character/harp_jump.png");
+
                 myXpos = 700;
                 myYpos = 507;
 
@@ -408,6 +413,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 opponentInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
                 opponentInfo.setRunRightImgPath("GameClient/image/character/penguin_right.png");
                 opponentInfo.setRunLeftImgPath("GameClient/image/character/penguin_left.png");
+                opponentInfo.setJumpImgPath("GameClient/image/character/penguin_jump.png");
+
                 opponentXpos = 650;
                 opponentYpos = 507;
                 break;
@@ -581,7 +588,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
         } else if (isMovingRight) {
             character = imageTool.getImage(myInfo.getRunRightImgPath());
             myInfo.setState(State.RIGHT);
-        } else {
+        } else if(isJumping){
+            character = imageTool.getImage(myInfo.getJumpImgPath());
+        }else {
             character = imageTool.getImage(myInfo.getCharacterImgPath());
             myInfo.setState(State.FRONT);
         }
