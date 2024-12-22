@@ -68,15 +68,15 @@ public class ListenNetwork extends Thread {
                     cm = (ChatMsg) obcm;
                     msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
                     System.out.println(msg);
-                }/*else if (obcm instanceof MovingInfo) {
+                }else if (obcm instanceof MovingInfo) {
 //					System.out.println("obcm을 제대로 받음");
                     mi = (MovingInfo) obcm;
-                }*/ else
+                } else
                     continue;
                 if (cm != null) {
                     switch (cm.getCode()) {
                         case "100": // 서버 접속 결과 - allow,deny
-                            //System.out.println(cm.getData()+" 데이터입니다");
+                            System.out.println(cm.getData()+" 데이터입니다");
                             String loginResult = cm.getData().split(" ")[0];
                             System.out.println("loginResult = " + loginResult + "로그인 성공 여부");
                             if (loginResult.equals(ALLOW_LOGIN_MSG)) {
@@ -106,8 +106,10 @@ public class ListenNetwork extends Thread {
 
                                 System.out.println(userName + " : " + playerCharacter + "번 캐릭터");
                                 ClientFrame.userNum = playerCharacter;
+
                                 ClientFrame.isChanged = true; // 화면 변화가 필요함
                                 ClientFrame.isGameScreen = true; // 게임 대기화면으로 변화
+
                             } else if (loginResult.equals(DENY_LOGIN_MSG)) {
                                 ClientFrame.isGameScreen = false;
                                 JOptionPane.showMessageDialog(null, "서버 인원 초과");
@@ -118,11 +120,30 @@ public class ListenNetwork extends Thread {
                         case "200":
                             ChatPanel.appendText(cm.getUserName(), cm.getData());
                             break;
+
                         case "300": //게임 스타트
+                            System.out.println("----------게임 스타트---------");
                             ClientFrame.isWaitScreen = false;
                             ClientFrame.isChanged = true;
                             ClientFrame.isPlayingScreen = true;
                             isPlayingGame = true;
+                            break;
+
+                        case "550":
+                            if(cm.getObjType().equals("ITEM"))
+                                GamePlayPanel.removeItem(cm.getObjIdx());
+                            else if (cm.getObjType().equals("SWITCH_ON")) {
+                                GamePlayPanel.switchOn(cm.getObjIdx());
+                            }
+                            else if (cm.getObjType().equals("SWITCH_OFF")) {
+                                GamePlayPanel.switchOff(cm.getObjIdx());
+                            }
+                            break;
+                        case "600":
+                            if(cm.getData().equals("GameOver")) {
+                                ClientFrame.gameScreenPanel.setDieImage();
+                                isPlayingGame = false;
+                            }
                             break;
                     }
                 }

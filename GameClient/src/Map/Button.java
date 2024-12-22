@@ -71,12 +71,7 @@ public class Button {
 
     public void setSwitchState(Boolean value) {
         this.isSwitchOn = value;
-        if (value) {
-            this.isVisible = false; // 스위치가 켜지면 보이지 않게
-        } else {
-            this.isVisible = true;  // 스위치가 꺼지면 다시 보이게
-        }
-        manage();
+        //manage();
     }
 
     public void manage() {

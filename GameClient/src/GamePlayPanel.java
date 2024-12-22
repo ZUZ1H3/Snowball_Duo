@@ -107,6 +107,22 @@ public class GamePlayPanel extends JPanel implements Runnable {
         items.remove(i);
     }
 
+    public static void switchOn(int i) { // 상대방이 먹은 item 없애기
+        if (buttons != null) {
+            buttons.get(i).setSwitchState(true);
+            isOpponentSwitchOn = true;
+            opponentlastSwitchIdx = i;
+        }
+    }
+
+    public static void switchOff(int i) {
+        if (buttons != null) {
+            buttons.get(i).setSwitchState(false);
+            isOpponentSwitchOn = false;
+            opponentlastSwitchIdx = -1;
+        }
+    }
+
     public void playerItemGetCheck() {
         for (int i = 0; i < items.size(); i++) {//Item m : items
 
