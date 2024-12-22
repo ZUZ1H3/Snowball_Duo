@@ -287,10 +287,28 @@ public class GamePlayPanel extends JPanel implements Runnable {
                             stageNum = 2;  // 두 번째 스테이지로 변경
                             setMap();  // 두 번째 스테이지 맵 설정
                             initState();  // 두 번째 스테이지 초기화
+
+                            switch (ClientFrame.userNum) {
+                                case 1:
+                                    myXpos = 70;
+                                    myYpos = 507;
+
+                                    opponentXpos = 110;
+                                    opponentYpos = 507;
+                                    break;
+                                case 2:
+                                    myXpos = 110;
+                                    myYpos = 507;
+
+                                    opponentXpos = 70;
+                                    opponentYpos = 507;
+                                    break;
+                            }
                         }
                         //stageNum = 2;
                         //setMap();
                         //initState();
+
 //                        switch (ClientFrame.userNum) {
 //                            case 1:
 //                                myXpos = 35;

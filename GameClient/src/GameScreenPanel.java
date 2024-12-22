@@ -48,13 +48,18 @@ public class GameScreenPanel extends JPanel {
                     setFocusable(true);
                 }
             });
-        }
-
-        if (chatPanel == null) { // chatPanel을 처음 생성하는 부분
-            chatPanel = new ChatPanel(userName); // 저장한 userName을 넘겨줌
-            chatPanel.setBounds(800, 0, 200, 600);
-            chatPanel.changePlayerList(ClientFrame.playerNames);
-            add(chatPanel);
+        } else {
+            gamePlayPanel.setBounds(0, 0, 800, 600);
+            add(gamePlayPanel);
+            addKeyListener(gamePlayPanel.testKey);
+            gamePlayPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.out.println("mouse click");
+                    requestFocus();
+                    setFocusable(true);
+                }
+            });
         }
         this.repaint();
     }
