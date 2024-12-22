@@ -62,9 +62,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
     boolean isOpponentArrive = false;
     boolean isGameClear = false;
 
-    int resetTotalDistance = 120;
+    int resetTotalDistance = 150;
     int jumpingTotalDistance = resetTotalDistance;
-    int jumpingDist = 8;
+    int jumpingDist = 9;
     int fallingDist = 6;
     int xmovingDist = 6;
 
@@ -123,6 +123,23 @@ public class GamePlayPanel extends JPanel implements Runnable {
         }
     }
 
+    public static void moveButtonBlocksDown() {
+        for (ButtonBlock block : buttonBlocks) {
+            if (block.getY() == block.getOriginalY()) { // 원래 위치인지 확인
+                block.setY(block.getY() + 40); // 블록을 40만큼 내림
+            }
+        }
+    }
+
+    public static void moveButtonBlocksUp() {
+        for (ButtonBlock block : buttonBlocks) {
+            if (block.getY() != block.getOriginalY()) { // 원래 위치가 아니면
+                block.setY(block.getOriginalY()); // 원래 위치로 복귀
+            }
+        }
+    }
+
+
     public void playerItemGetCheck() {
         for (int i = 0; i < items.size(); i++) {//Item m : items
 
@@ -148,34 +165,25 @@ public class GamePlayPanel extends JPanel implements Runnable {
             if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
 
             if (characterRec.intersects(s.getRectButton())) {
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!스위치랑 닿음!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                //s.setSwitchOn(true); // 버튼을 누르면 스위치가 ON이 되고 ButtonBlock이 내려감 -> 여기서 움직이지 못하는 상황발생
-                // 스위치가 처음 눌렸을 때만 실행되도록 조건 추가
-                if (!s.isSwitchOn()) {
-                    for (ButtonBlock block : buttonBlocks) {
-                        if (block.getY() == block.getOriginalY()) { // 원래 위치인지 확인
-                            block.setY(block.getY() + 34); // 20만큼 내림
-                        }
-                    }
-                    s.setSwitchOn(true); // 스위치를 켬
+                if (!s.isSwitchOn()) { // 스위치가 꺼져 있으면
+                    moveButtonBlocksDown(); // 로컬에서 블록 내리기
+                    s.setSwitchOn(true); // 스위치 상태 변경
                     isMySwitchOn = true;
                     mylastOnSwitchIdx = i;
+
+                    // 네트워크로 "SWITCH_ON" 이벤트 전송
                     ListenNetwork.SendObject(new ChatMsg("550", i, "SWITCH_ON"));
-                    break;
+                    //break;
                 }
             } else {
-                // 버튼이 눌리지 않았을 때 스위치 상태 초기화
-                if (isMySwitchOn && mylastOnSwitchIdx == i) {
-                    System.out.println("-------------------스위치 벗어남----------------");
-                    for (ButtonBlock block : buttonBlocks) {
-                        if (block.getY() != block.getOriginalY()) { // 원래 위치가 아니면
-                            block.setY(block.getOriginalY()); // 원래 위치로 복귀
-                        }
-                    }
+                if (isMySwitchOn && mylastOnSwitchIdx == i) { // 스위치를 벗어난 경우
+                    moveButtonBlocksUp(); // 로컬에서 블록 올리기
+                    s.setSwitchOn(false); // 스위치 상태 변경
                     isMySwitchOn = false;
                     mylastOnSwitchIdx = -1;
+
+                    // 네트워크로 "SWITCH_OFF" 이벤트 전송
                     ListenNetwork.SendObject(new ChatMsg("550", i, "SWITCH_OFF"));
-                    s.setSwitchOn(false);
                 }
             }
         }

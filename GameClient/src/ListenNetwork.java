@@ -134,9 +134,11 @@ public class ListenNetwork extends Thread {
                                 GamePlayPanel.removeItem(cm.getObjIdx());
                             else if (cm.getObjType().equals("SWITCH_ON")) {
                                 GamePlayPanel.switchOn(cm.getObjIdx());
+                                GamePlayPanel.moveButtonBlocksDown(); // ButtonBlock 내리기
                             }
                             else if (cm.getObjType().equals("SWITCH_OFF")) {
                                 GamePlayPanel.switchOff(cm.getObjIdx());
+                                GamePlayPanel.moveButtonBlocksUp(); // ButtonBlock 올리기
                             }
                             break;
                         case "600":
