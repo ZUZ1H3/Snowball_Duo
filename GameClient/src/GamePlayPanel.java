@@ -62,6 +62,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     boolean isOpponentArrive = false;
     boolean isGameClear = false;
 
+    boolean clear_continue_yes = false; //클리어 하고 continue yes
+
     int resetTotalDistance = 150;
     int jumpingTotalDistance = resetTotalDistance;
     int jumpingDist = 9;
@@ -107,7 +109,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         items.remove(i);
     }
 
-    public static void switchOn(int i) { // 상대방이 먹은 item 없애기
+    public static void switchOn(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(true);
             isOpponentSwitchOn = true;
@@ -324,12 +326,12 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 ClientFrame.isGameOverPanel = true;
             }
 
-            else if (isGameClear) {
-                moveThread.interrupt();
-                ClientFrame.net.isPlayingGame = false;
-                ClientFrame.isChanged = true;
-                ClientFrame.isGameClearPanel = true;
-            }
+//            else if (isGameClear) {
+//                moveThread.interrupt();
+//                ClientFrame.net.isPlayingGame = false;
+//                ClientFrame.isChanged = true;
+//                ClientFrame.isGameClearPanel = true;
+//            }
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -337,7 +339,17 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void setMap() {
-        String mapPath = "GameClient/src/resource/map.txt";
+        String mapPath = "";
+        switch(stageNum) {
+            case 1:
+                mapPath = "GameClient/src/resource/map.txt";
+                break;
+            case 2:
+                mapPath = "GameClient/src/resource/map2.txt";
+                break;
+        }
+
+
         map = new Map(mapPath);
         blocks = map.getBlocks();
         barriers = map.getBarriers();
@@ -386,7 +398,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
                 myInfo.setRunRightImgPath("GameClient/image/character/penguin_right.png");
                 myInfo.setRunLeftImgPath("GameClient/image/character/penguin_left.png");
-                myInfo.setJumpImgPath("GameClient/image/character/penguin_jump_left.png");
+                myInfo.setJumpImgPath("GameClient/image/character/penguin_jump.png");
                 myXpos = 650;
                 myYpos = 507;
 
