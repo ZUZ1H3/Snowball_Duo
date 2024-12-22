@@ -141,6 +141,7 @@ public class ListenNetwork extends Thread {
                                 GamePlayPanel.moveButtonBlocksUp(); // ButtonBlock 올리기
                             }
                             break;
+
                         case "600":
                             if(cm.getData().equals("GameOver")) {
                                 ClientFrame.gameScreenPanel.setDieImage();
