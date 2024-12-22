@@ -11,8 +11,9 @@ public class Button {
     Rectangle rectButton;
     int x, y, width, height;
     private ButtonBlock manageBlock;
-    private Boolean isSwitchOn = false;
+    private boolean isSwitchOn;
     private boolean isVisible = true; // 추가: 버튼의 가시성을 위한 변수
+    private ButtonBlock associatedButtonBlock;  // 해당 버튼과 연결된 ButtonBlock
 
     public Button() {
 
@@ -25,6 +26,35 @@ public class Button {
         this.height = BUTTON_HEIGHT;
         this.rectButton = new Rectangle(x,y,width, height);
         setButtonImage();
+    }
+
+    public boolean isSwitchOn() {
+        return isSwitchOn;
+    }
+
+//    public void setSwitchOn(boolean switchOn) {
+//        isSwitchOn = switchOn;
+//        // 스위치가 눌리면 ButtonBlock 내려주기
+//        if (this.associatedButtonBlock != null) {
+//            this.associatedButtonBlock.moveDown();
+//        } else {
+//            System.out.println("Associated ButtonBlock is null.");
+//        }
+//        if (isSwitchOn) {
+//            associatedButtonBlock.moveDown();
+//        }
+//    }
+
+    public void setSwitchOn(boolean switchOn) {
+        this.isSwitchOn = switchOn;
+    }
+
+    public ButtonBlock getAssociatedButtonBlock() {
+        return associatedButtonBlock;
+    }
+
+    public void setAssociatedButtonBlock(ButtonBlock block) {
+        this.associatedButtonBlock = block;
     }
 
     public void setButtonImage() {

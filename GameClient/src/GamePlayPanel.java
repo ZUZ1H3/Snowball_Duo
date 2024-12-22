@@ -126,29 +126,41 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void playerOnSwitchCheck() {
-
-        for (int i = 0; i < buttons.size(); i++) {//Item m : items
+        for (int i = 0; i < buttons.size(); i++) {
             Button s = buttons.get(i);
 
             if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
 
             if (characterRec.intersects(s.getRectButton())) {
-                //TODO:네트워크로 스위치 눌렸다고 보내주기
-                //ListenNetwork.SendObject(new ChatMsg(GameClientFrame.roomId,"550",i));
-                s.setSwitchState(true);
-                System.out.println("스위치가 눌렸음");
-                isMySwitchOn = true;
-                mylastOnSwitchIdx = i;
-                ListenNetwork.SendObject(new ChatMsg( "550", i, "SWITCH_ON"));
-                break;
-            }
-
-            else if (isMySwitchOn && mylastOnSwitchIdx == i) {
-                System.out.println("스위치가 안눌림");
-                isMySwitchOn = false;
-                mylastOnSwitchIdx = -1;
-                ListenNetwork.SendObject(new ChatMsg( "550", i, "SWITCH_OFF"));
-                s.setSwitchState(false);
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!스위치랑 닿음!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                //s.setSwitchOn(true); // 버튼을 누르면 스위치가 ON이 되고 ButtonBlock이 내려감 -> 여기서 움직이지 못하는 상황발생
+                // 스위치가 처음 눌렸을 때만 실행되도록 조건 추가
+                if (!s.isSwitchOn()) {
+                    for (ButtonBlock block : buttonBlocks) {
+                        if (block.getY() == block.getOriginalY()) { // 원래 위치인지 확인
+                            block.setY(block.getY() + 34); // 20만큼 내림
+                        }
+                    }
+                    s.setSwitchOn(true); // 스위치를 켬
+                    isMySwitchOn = true;
+                    mylastOnSwitchIdx = i;
+                    ListenNetwork.SendObject(new ChatMsg("550", i, "SWITCH_ON"));
+                    break;
+                }
+            } else {
+                // 버튼이 눌리지 않았을 때 스위치 상태 초기화
+                if (isMySwitchOn && mylastOnSwitchIdx == i) {
+                    System.out.println("-------------------스위치 벗어남----------------");
+                    for (ButtonBlock block : buttonBlocks) {
+                        if (block.getY() != block.getOriginalY()) { // 원래 위치가 아니면
+                            block.setY(block.getOriginalY()); // 원래 위치로 복귀
+                        }
+                    }
+                    isMySwitchOn = false;
+                    mylastOnSwitchIdx = -1;
+                    ListenNetwork.SendObject(new ChatMsg("550", i, "SWITCH_OFF"));
+                    s.setSwitchOn(false);
+                }
             }
         }
     }
@@ -486,7 +498,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 }
                 if (isMovingLeft || isMovingRight)
                     xMoving();
-                playerOnSwitchCheck();
+                playerOnSwitchCheck(); //여기부분이 스위치랑 닿았을때 문제!!
                 MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, myInfo.getState());
                 ListenNetwork.SendObject(obcm);
                 try {
@@ -576,20 +588,20 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
         characterRec = new Rectangle(x, y, myWidth, myHeight);
 
-        for (Block block : blocks) {
-            if (characterRec.intersects(block.getRectBlock())) {
+        for (int i = 0; i<blocks.size(); i++) {
+            if (characterRec.intersects(blocks.get(i).getRectBlock())) {
                 return false;
             }
         }
 
-        for (Barrier barrier : barriers) {
-            if (characterRec.intersects(barrier.getBarrierRect())) {
+        for (int i=0;i<barriers.size();i++) {
+            if (characterRec.intersects(barriers.get(i).getBarrierRect())) {
                 return false;
             }
         }
 
-        for (ButtonBlock buttonBlock : buttonBlocks) {
-            if (characterRec.intersects(buttonBlock.getRectButtonBlock()) && buttonBlock.getIsVisible()) {
+        for (int i=0;i<buttonBlocks.size();i++) {
+            if (characterRec.intersects(buttonBlocks.get(i).getRectButtonBlock())) {
                 return false;
             }
         }
