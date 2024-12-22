@@ -62,7 +62,7 @@ public class GameScreenPanel extends JPanel {
         remove(gamePlayPanel);
         if(gameOverPanel == null) {
             gameOverPanel = new GameOverPanel();
-            gameOverPanel.setBounds(0, 0, gameOverPanel.getWidth(), gameOverPanel.getHeight());
+            gameOverPanel.setBounds(0, 0, 800, 600);
             add(gameOverPanel);
         }
         this.repaint();
