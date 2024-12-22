@@ -354,30 +354,30 @@ public class GamePlayPanel extends JPanel implements Runnable {
             case 1:
                 myInfo.setUserNum(1);
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
-                myInfo.setRunRightImgPath("GameClient/image/character/penguin_ingame.png");
-                myInfo.setRunLeftImgPath("GameClient/image/character/penguin_ingame.png");
+                myInfo.setRunRightImgPath("GameClient/image/character/penguin_right.png");
+                myInfo.setRunLeftImgPath("GameClient/image/character/penguin_left.png");
                 myXpos = 650;
                 myYpos = 507;
 
                 opponentInfo.setUserNum(2);
                 opponentInfo.setCharacterImgPath("GameClient/image/character/harp_ingame.png");
-                opponentInfo.setRunRightImgPath("GameClient/image/character/harp_ingame.png");
-                opponentInfo.setRunLeftImgPath("GameClient/image/character/harp_ingame.png");
+                opponentInfo.setRunRightImgPath("GameClient/image/character/harp_right.png");
+                opponentInfo.setRunLeftImgPath("GameClient/image/character/harp_left.png");
                 opponentXpos = 700;
                 opponentYpos = 507;
                 break;
             case 2:
                 myInfo.setUserNum(2);
                 myInfo.setCharacterImgPath("GameClient/image/character/harp_ingame.png");
-                myInfo.setRunRightImgPath("GameClient/image/character/harp_ingame.png");
-                myInfo.setRunLeftImgPath("GameClient/image/character/harp_ingame.png");
+                myInfo.setRunRightImgPath("GameClient/image/character/harp_right.png");
+                myInfo.setRunLeftImgPath("GameClient/image/character/harp_left.png");
                 myXpos = 700;
                 myYpos = 507;
 
                 opponentInfo.setUserNum(1);
                 opponentInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
-                opponentInfo.setRunRightImgPath("GameClient/image/character/penguin_ingame.png");
-                opponentInfo.setRunLeftImgPath("GameClient/image/character/penguin_ingame.png");
+                opponentInfo.setRunRightImgPath("GameClient/image/character/penguin_right.png");
+                opponentInfo.setRunLeftImgPath("GameClient/image/character/penguin_left.png");
                 opponentXpos = 650;
                 opponentYpos = 507;
                 break;
