@@ -6,19 +6,15 @@ import java.awt.image.BufferedImage;
 
 public class RulesPanel extends JPanel {
     private Image gameRuleBackgroundImage = new ImageIcon("GameClient/image/background/background_gamerule.png").getImage();
-
     private ImageIcon gameStartImage = new ImageIcon("GameClient/image/game_start.png");
     private ImageIcon backImage = new ImageIcon("GameClient/image/back.png");
-
     private JButton gameStartButton = createImageButton(gameStartImage, 729, 521, 214, 30);
     private JButton backButton = createImageButton(backImage, 39, 45, 43, 30);
-
     private ImageIcon gameStartHoverImage = new ImageIcon(applyColorFilter(gameStartImage, Color.decode("#B4FDFF")));
     private ImageIcon backHoverImage = new ImageIcon(applyColorFilter(backImage, Color.decode("#B4FDFF")));
 
     public RulesPanel(ClientFrame frame) {
         setLayout(null);
-
         add(gameStartButton);  // 버튼 패널에 추가
         add(backButton);
 

@@ -204,9 +204,8 @@ public class ServerFrame extends JFrame {
             System.out.println("LOGOUT 중");
             room.getUserVec().remove(this);
             System.out.println(room.getUserVec().size());
-            String msg = "[" + UserName + "]님이 퇴장 했습니다..\n";
             user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-            AppendText("사용자 " + "[" + UserName + "] 퇴장. 남은 참가자 수 " + user_vc.size());
+            AppendText("[" + UserName + "] 퇴장. 남은 유저 수 " + user_vc.size());
         }
 
         // 모든 User들에게 Object를 방송

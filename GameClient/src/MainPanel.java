@@ -24,6 +24,7 @@ public class MainPanel extends JPanel {
         add(gameStartButton);
         add(gameRulesButton);
 
+        //게임 스타트
         gameStartButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -40,6 +41,7 @@ public class MainPanel extends JPanel {
             }
         });
 
+        //게임 규칙
         gameRulesButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);

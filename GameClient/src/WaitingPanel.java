@@ -38,7 +38,6 @@ public class WaitingPanel extends JPanel {
 
     public WaitingPanel(ClientFrame frame) {
         setLayout(null);
-
         add(backButton);
         add(penguinLabel);
         add(sealLabel);

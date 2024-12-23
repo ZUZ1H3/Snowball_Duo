@@ -33,6 +33,7 @@ public class ScreenPanel extends JPanel {
         repaint();
     }
 
+    // 다음 스테이지로 넘어감
     public void changeToNextStage() {
         remove(clearPanel);
         if (playPanel == null) {
@@ -64,6 +65,7 @@ public class ScreenPanel extends JPanel {
         this.repaint();
     }
 
+    //실제 플레이 패널로 전환
     public void changeToPlaypanel() {
         remove(waitingPanel);
         if (playPanel == null) {
@@ -90,6 +92,7 @@ public class ScreenPanel extends JPanel {
         this.repaint();
     }
 
+    // 재시작 화면으로 변경하는 메서드
     public void changeToRePlay() {
         remove(overPanel);  // 게임 오버 화면 제거
         remove(chatPanel);
@@ -114,6 +117,7 @@ public class ScreenPanel extends JPanel {
         this.repaint();
     }
 
+    // 게임 오버 화면으로 변경하는 메서드
     public void changeToGameOverPanel() {
         playPanel.setVisible(false);  // 게임 플레이 화면 숨기기
         if (overPanel == null) {
@@ -124,6 +128,7 @@ public class ScreenPanel extends JPanel {
         this.repaint();
     }
 
+    // 게임 클리어 화면으로 변경하는 메서드
     public void changeToGameClearPanel(int fishCount, int shellCount) {
         remove(playPanel);
         if (clearPanel == null) {
@@ -134,13 +139,14 @@ public class ScreenPanel extends JPanel {
         this.repaint();
     }
 
+    // 캐릭터 이동 정보 설정
     public void setMovingInfo(int x, int y, State type) {
         if (playPanel != null)
             playPanel.setMoving(x, y, type);
     }
 
+    // 캐릭터 사망 이미지 설정
     public void setDieImage() {
         playPanel.setDieImage();
     }
-
 }

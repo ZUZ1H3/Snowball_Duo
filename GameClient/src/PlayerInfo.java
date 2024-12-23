@@ -1,5 +1,3 @@
-
-
 public class PlayerInfo {
     int userNum;
     String characterImgPath;

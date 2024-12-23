@@ -54,7 +54,6 @@ public class StartPanel extends JPanel {
             public void mouseExited(MouseEvent e) {
                 startButton.setIcon(startImage);
             }
-
         });
 
 

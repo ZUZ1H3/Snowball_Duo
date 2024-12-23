@@ -15,10 +15,6 @@ public class Room extends Thread{
         System.out.println("UserVec.size()="+UserVec.size());
     }
 
-    public ServerSocket getSocket() {
-        return this.socket;
-    }
-
     public Vector getUserVec() {
         return this.UserVec;
     }

@@ -18,10 +18,10 @@ public class PlayPanel extends JPanel implements Runnable {
     private final int CHARACTER_WIDTH = 34;
     private final int CHARACTER_HEIGHT = 34;
 
-    int myWidth, myHeight;
-    int opponentWidth, opponentHeight;
+    int myWidth, myHeight; // 내 캐릭터의 크기
+    int opponentWidth, opponentHeight; // 상대 캐릭터의 크기
 
-    private int stageNum = 1;
+    private int stageNum = 1; // 현재 스테이지 번호
 
     private Map map;
     private ArrayList<Block> blocks = null;
@@ -33,10 +33,10 @@ public class PlayPanel extends JPanel implements Runnable {
 
     //스위치 관련 변수
     public static boolean isOpponentSwitchOn = false;
-    public static int opponentlastSwitchIdx = -1;
+    public static int opponentlastSwitchIdx = -1;  // 상대방이 마지막으로 조작한 스위치 인덱스
 
     public static boolean isMySwitchOn = false;
-    public static int mylastOnSwitchIdx = -1;
+    public static int mylastOnSwitchIdx = -1; // 내가 마지막으로 조작한 스위치 인덱스
 
     //키 어댑터
     public KeyAdapter testKey;
@@ -48,7 +48,7 @@ public class PlayPanel extends JPanel implements Runnable {
     long pretime;//루프 간격을 조절하기 위한 시간 체크값
     int keybuff;//키 버퍼값
     Thread mainwork;
-    MoveThread moveThread = new MoveThread();
+    MoveThread moveThread = new MoveThread();  // 이동 관련 스레드
     boolean isMovingRight = false;
     boolean isMovingLeft = false;
     boolean isJumping = false;
@@ -59,17 +59,17 @@ public class PlayPanel extends JPanel implements Runnable {
     boolean isOpponentArrive = false;
     boolean isGameClear = false;
 
-    int resetTotalDistance = 150;
-    int jumpingTotalDistance = resetTotalDistance;
-    int jumpingDist = 9;
-    int fallingDist = 6;
-    int xmovingDist = 6;
+    int resetTotalDistance = 150;  // 리셋 거리
+    int jumpingTotalDistance = resetTotalDistance; // 점프 거리
+    int jumpingDist = 9; // 점프 이동 거리
+    int fallingDist = 6; // 떨어지는 거리
+    int xmovingDist = 6; // x축 이동 거리
 
     // 이미지 툴킷
     Toolkit imageTool = Toolkit.getDefaultToolkit();
     Image mapImg = imageTool.getImage("GameClient/image/background/background_ingame.png");
-    PlayerInfo myInfo = new PlayerInfo();
-    PlayerInfo opponentInfo = new PlayerInfo();
+    PlayerInfo myInfo = new PlayerInfo(); // 내 캐릭터 정보
+    PlayerInfo opponentInfo = new PlayerInfo(); // 상대 캐릭터 정보
 
     Image character;
     Image opponent;
@@ -92,24 +92,26 @@ public class PlayPanel extends JPanel implements Runnable {
     boolean roof = true;//스레드 루프 정보
 
     public void gameControll() {
-        playerItemGetCheck();
-        playerObstacleCheck();
-        playerArriveCheck();
+        playerItemGetCheck(); // 아이템 획득 여부 체크
+        playerObstacleCheck(); // 장애물 충돌 여부 체크
+        playerArriveCheck(); // 목표 도달 여부 체크
     }
 
-    // 상대방이 먹은 item 없애기
+    // 상대방이 먹은 아이템을 리스트에서 제거
     public static void removeItem(int i) { // 상대방이 먹은 item 없애기
         items.remove(i);
     }
 
+    // 스위치 ON 메소드
     public static void switchOn(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(true);
-            isOpponentSwitchOn = true;
-            opponentlastSwitchIdx = i;
+            isOpponentSwitchOn = true; // 상대방 스위치 상태 설정
+            opponentlastSwitchIdx = i; // 마지막으로 조작한 스위치 저장
         }
     }
 
+    // 스위치 OFF 메소드
     public static void switchOff(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(false);
@@ -118,6 +120,7 @@ public class PlayPanel extends JPanel implements Runnable {
         }
     }
 
+    //발판 아래로 이동
     public static void moveButtonBlocksDown() {
         for (ButtonBlock block : buttonBlocks) {
             if (block.getY() == block.getOriginalY()) { // 원래 위치인지 확인
@@ -134,7 +137,7 @@ public class PlayPanel extends JPanel implements Runnable {
         }
     }
 
-
+    // 아이템을 획득했는지 체크하는 메소드
     public void playerItemGetCheck() {
         for (int i = 0; i < items.size(); i++) {//Item m : items
             Item m = items.get(i);
@@ -143,10 +146,10 @@ public class PlayPanel extends JPanel implements Runnable {
             if (((m.getX() <= myXpos && myXpos <= m.getX() + m.getWidth()) || (m.getX() <= myXpos + myWidth && myXpos + myWidth <= m.getX() + m.getWidth()))
                     && ((myYpos <= m.getY() && m.getY() <= myYpos + myHeight) || (myYpos <= m.getY() + m.getHeight() && m.getY() + m.getHeight() <= myYpos + myHeight))) {
                 items.remove(m);
-                if (m.getMapNumber() % 2 == 0) {
-                    ClientFrame.harpSealItemCount++;
+                if (m.getMapNumber() % 2 == 0) { //짝수 : 하프물범
+                    ClientFrame.harpSealItemCount++;  // 하프물범 아이템 카운트 증가
                 } else {
-                    ClientFrame.penguinItemCount++;
+                    ClientFrame.penguinItemCount++;  // 펭귄 아이템 카운트 증가
                 }
                 //TODO:네트워크로 사라진 아이템 인덱스 보내주기
                 ListenNetwork.SendObject(new ChatMsg("550", i, "ITEM"));
@@ -156,12 +159,15 @@ public class PlayPanel extends JPanel implements Runnable {
         }
     }
 
+    // 스위치가 켜졌는지 체크
     public void playerOnSwitchCheck() {
         for (int i = 0; i < buttons.size(); i++) {
             Button s = buttons.get(i);
 
+            // 상대방이 이미 스위치를 눌렀다면 건너뛰기
             if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
 
+            // 스위치 영역과 캐릭터 영역이 겹치는지 확인
             if (characterRec.intersects(s.getRectButton())) {
                 if (!s.isSwitchOn()) { // 스위치가 꺼져 있으면
                     moveButtonBlocksDown(); // 로컬에서 블록 내리기
@@ -187,6 +193,7 @@ public class PlayPanel extends JPanel implements Runnable {
         }
     }
 
+    // 장애물과의 충돌 여부 체크
     public void playerObstacleCheck() {
         for (int i = 0; i < barriers.size(); i++) {
             Barrier o = barriers.get(i);
@@ -221,7 +228,7 @@ public class PlayPanel extends JPanel implements Runnable {
         return null;  // 아이템이 없으면 null 반환
     }
 
-
+    // 목표에 도달했는지 여부를 체크
     public void playerArriveCheck() {
         for (int i = 0; i < doors.size(); i++) {
             Door door = doors.get(i);
@@ -255,18 +262,17 @@ public class PlayPanel extends JPanel implements Runnable {
             while (roof) {
                 pretime = System.currentTimeMillis();
                 gameControll();
-                if (isDie || isOpponentDie) {
+                if (isDie || isOpponentDie) { //죽었을 경우
                     Thread.sleep(1100);
                     ClientFrame.isChanged = true;
-                    ClientFrame.isGameOverPanel = true;
+                    ClientFrame.isGameOverPanel = true; //게임 오버 패널로 전환
 
                     while (ClientFrame.isGameOverPanel) {
                         Thread.sleep(100);
                     }
 
                     if (ClientFrame.isGameOverPanel == false) {
-                        systeminit();
-
+                        systeminit(); //상태 초기화
                         switch (ClientFrame.userNum) {
                             case 1:
                                 myXpos = 650;
@@ -288,15 +294,14 @@ public class PlayPanel extends JPanel implements Runnable {
                         mainwork.start(); // 스레드 시작
                     }
 
-                } else if (isGameClear) {
-                    if (stageNum == 1) {
+                } else if (isGameClear) { //게임 클리어 시
+                    if (stageNum == 1) { //첫 번째 스테이지일 경우
                         Thread.sleep(1100);
                         ClientFrame.isChanged = true;
                         ClientFrame.isGameClearPanel = true;  // 클리어 화면 표시
 
                         while (ClientFrame.isGameClearPanel) {
-                            // 대기 상태로 유지
-                            Thread.sleep(100);
+                            Thread.sleep(100); // 대기 상태로 유지
                         }
 
                         // 클리어 버튼을 누르면 두 번째 스테이지로 넘어간다
@@ -305,6 +310,7 @@ public class PlayPanel extends JPanel implements Runnable {
                             setMap();  // 두 번째 스테이지 맵 설정
                             initState();  // 두 번째 스테이지 초기화
 
+                            // 플레이어 위치 설정 (첫 번째 사용자와 두 번째 사용자에 대해 구분)
                             switch (ClientFrame.userNum) {
                                 case 1:
                                     myXpos = 70;
@@ -329,7 +335,7 @@ public class PlayPanel extends JPanel implements Runnable {
                 }
 
                 repaint();
-
+                // 시간 차이를 계산하여 프레임 지연을 맞춤
                 if (System.currentTimeMillis() - pretime < delay)
                     Thread.sleep(delay - System.currentTimeMillis() + pretime);
                 if (status != 4) cnt++;
@@ -339,6 +345,7 @@ public class PlayPanel extends JPanel implements Runnable {
         }
     }
 
+    // 현재 스테이지 맵 설정
     public void setMap() {
         String mapPath = "";
         switch (stageNum) {
@@ -350,7 +357,6 @@ public class PlayPanel extends JPanel implements Runnable {
                 break;
         }
 
-
         map = new Map(mapPath);
         blocks = map.getBlocks();
         barriers = map.getBarriers();
@@ -360,6 +366,7 @@ public class PlayPanel extends JPanel implements Runnable {
         buttonBlocks = map.getButtonBlocks();
     }
 
+    // 상태 변수 초기화
     public void initState() {
         isMovingRight = false;
         isMovingLeft = false;
@@ -372,11 +379,12 @@ public class PlayPanel extends JPanel implements Runnable {
         isGameClear = false;
     }
 
+    // 게임 시스템 초기화
     public void systeminit() {
         status = 0;
         cnt = 0;
         delay = 17;// 17/1000초 = 58 (프레임/초)
-        keybuff = 0;
+        keybuff = 0; // 키 입력 버퍼 초기화
 
         initState();
         setMap();
@@ -489,6 +497,7 @@ public class PlayPanel extends JPanel implements Runnable {
         update(g);
     }
 
+    // 화면을 실제로 업데이트하는 메소드
     public void update(Graphics g) {
         buffG.clearRect(0, 0, WIDTH, HEIGHT);
         buffG.drawImage(mapImg, 0, 0, this);
@@ -516,7 +525,7 @@ public class PlayPanel extends JPanel implements Runnable {
             }
         }
 
-
+        // 도달 여부 확인
         if (!(isArrive && isOpponentArrive)) { // 모두 도착 X
             buffG.drawImage(character, myXpos, myYpos, this);
             if (!isOpponentDie) {
@@ -563,9 +572,9 @@ public class PlayPanel extends JPanel implements Runnable {
                 }
                 if (isMovingLeft || isMovingRight)
                     xMoving();
-                playerOnSwitchCheck(); //여기부분이 스위치랑 닿았을때 문제!!
+                playerOnSwitchCheck();
                 MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, myInfo.getState());
-                ListenNetwork.SendObject(obcm);
+                ListenNetwork.SendObject(obcm); // 서버로 현재 위치와 상태 정보를 전송.
                 try {
                     sleep(30);
                 } catch (InterruptedException e) {
@@ -670,7 +679,6 @@ public class PlayPanel extends JPanel implements Runnable {
                 return false;
             }
         }
-
         return true;
     }
 }

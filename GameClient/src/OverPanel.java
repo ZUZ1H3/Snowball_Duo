@@ -29,6 +29,7 @@ public class OverPanel extends JPanel {
         add(continueLabel);
         add(yesButton);
 
+        //버튼 클릭 시 retry
         yesButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
