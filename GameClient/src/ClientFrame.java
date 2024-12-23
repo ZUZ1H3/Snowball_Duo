@@ -96,7 +96,6 @@ public class ClientFrame extends JFrame {
         else if (isRetry) {
             System.out.println("다시 시작하는 화면으로 전환되어야함");
             isRetry = false;
-            isGameOverPanel = false;
             gameScreenPanel.changeToRePlay();
         }
         else if (isGameClearPanel) {

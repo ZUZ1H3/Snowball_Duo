@@ -31,7 +31,7 @@ public class GameClearPanel extends JPanel {
     private JLabel shellCountLabel = new JLabel();
     private Font font_regular20 = new Font("Galmuri9 Regular", Font.PLAIN, 20);
 
-    public GameClearPanel(int fishCount, int shellCount){
+    public GameClearPanel(int fishCount, int shellCount) {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setLayout(null);
         setVisible(true);
@@ -76,9 +76,8 @@ public class GameClearPanel extends JPanel {
         yesButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //yes를 클릭했을때
-                ClientFrame.isChanged = true;
-                ClientFrame.isNextStage = true;
+                ChatMsg obcm = new ChatMsg(ClientFrame.userName, "301", "NEXT_STAGE");
+                ListenNetwork.SendObject(obcm);
             }
 
             public void mouseEntered(MouseEvent e) {

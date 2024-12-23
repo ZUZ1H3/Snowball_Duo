@@ -41,9 +41,8 @@ public class GameOverPanel extends JPanel {
         yesButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //yesButton을 눌렀을때
-                ClientFrame.isChanged = true;
-                ClientFrame.isRetry = true;
+                ChatMsg obcm = new ChatMsg(ClientFrame.userName, "302", "RETRY");
+                ListenNetwork.SendObject(obcm);
             }
 
             public void mouseEntered(MouseEvent e) {
