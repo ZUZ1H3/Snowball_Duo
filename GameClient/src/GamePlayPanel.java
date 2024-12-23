@@ -318,17 +318,17 @@ public class GamePlayPanel extends JPanel implements Runnable {
                             switch (ClientFrame.userNum) {
                                 case 1:
                                     myXpos = 70;
-                                    myYpos = 100;
+                                    myYpos = 507;
 
                                     opponentXpos = 110;
-                                    opponentYpos = 100;
+                                    opponentYpos = 507;
                                     break;
                                 case 2:
                                     myXpos = 110;
-                                    myYpos = 100;
+                                    myYpos = 507;
 
                                     opponentXpos = 70;
-                                    opponentYpos = 100;
+                                    opponentYpos = 507;
                                     break;
                             }
                         }

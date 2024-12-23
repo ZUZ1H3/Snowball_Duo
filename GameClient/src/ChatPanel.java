@@ -134,7 +134,7 @@ public class ChatPanel extends JPanel {
         timerLabel = new JLabel("00:00");
         timerLabel.setFont(font_bold);
         timerLabel.setForeground(Color.WHITE);
-        timerLabel.setBounds(42, 33, 120, 53); // 위치 설정
+        timerLabel.setBounds(42, 33, 160, 53); // 위치 설정
         add(timerLabel);
 
         // 타이머 설정
