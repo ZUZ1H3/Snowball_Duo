@@ -156,10 +156,10 @@ public class ListenNetwork extends Thread {
                                     System.out.println("아이템을 찾을 수 없습니다.");
                                 }
                             } else if (cm.getObjType().equals("SWITCH_ON")) {
-                                PlayPanel.switchOn(cm.getObjIdx());
+                                PlayPanel.buttonOn(cm.getObjIdx());
                                 PlayPanel.moveButtonBlocksDown(); // ButtonBlock 내리기
                             } else if (cm.getObjType().equals("SWITCH_OFF")) {
-                                PlayPanel.switchOff(cm.getObjIdx());
+                                PlayPanel.buttonOff(cm.getObjIdx());
                                 PlayPanel.moveButtonBlocksUp(); // ButtonBlock 올리기
                             }
                             break;

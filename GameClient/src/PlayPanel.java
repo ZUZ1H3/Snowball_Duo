@@ -31,24 +31,26 @@ public class PlayPanel extends JPanel implements Runnable {
     private static ArrayList<Button> buttons = null;
     private static ArrayList<ButtonBlock> buttonBlocks = null;
 
-    //스위치 관련 변수
-    public static boolean isOpponentSwitchOn = false;
-    public static int opponentlastSwitchIdx = -1;  // 상대방이 마지막으로 조작한 스위치 인덱스
+    //버튼 관련 변수
+    public static boolean isOpponentButtonOn = false;
+    public static int opponentlastButtonIndex = -1;  // 상대방이 마지막으로 조작한 버튼 인덱스
 
-    public static boolean isMySwitchOn = false;
-    public static int mylastOnSwitchIdx = -1; // 내가 마지막으로 조작한 스위치 인덱스
+    public static boolean isMyButtonOn = false;
+    public static int mylastOnButtonIndex = -1; // 내가 마지막으로 조작한 버튼 인덱스
 
     //키 어댑터
     public KeyAdapter testKey;
 
     //게임 제어
-    int status;//게임의 상태
-    int cnt;//루프 제어용 컨트롤 변수
-    int delay;//루프 딜레이. 1/1000초 단위.
-    long pretime;//루프 간격을 조절하기 위한 시간 체크값
-    int keybuff;//키 버퍼값
+    int status; //게임 상태
+    int cnt; //컨트롤 변수
+    int delay; //루프 딜레이
+    long pretime; //시간 체크값
+    int keybuff; //키 버퍼
     Thread mainwork;
     MoveThread moveThread = new MoveThread();  // 이동 관련 스레드
+
+    //현재 상태 변수
     boolean isMovingRight = false;
     boolean isMovingLeft = false;
     boolean isJumping = false;
@@ -71,10 +73,12 @@ public class PlayPanel extends JPanel implements Runnable {
     PlayerInfo myInfo = new PlayerInfo(); // 내 캐릭터 정보
     PlayerInfo opponentInfo = new PlayerInfo(); // 상대 캐릭터 정보
 
+    //캐릭터와 상대를 그리는 이미지
     Image character;
     Image opponent;
     Rectangle characterRec;
 
+    //열린 문 이미지
     Image openPengDoorImg = imageTool.getImage("GameClient/image/map/open_peng_door.png");
     Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/open_harp_door.png");
 
@@ -91,6 +95,7 @@ public class PlayPanel extends JPanel implements Runnable {
 
     boolean roof = true;//스레드 루프 정보
 
+    //게임 컨트롤 함수
     public void gameControll() {
         playerItemGetCheck(); // 아이템 획득 여부 체크
         playerObstacleCheck(); // 장애물 충돌 여부 체크
@@ -102,21 +107,21 @@ public class PlayPanel extends JPanel implements Runnable {
         items.remove(i);
     }
 
-    // 스위치 ON 메소드
-    public static void switchOn(int i) {
+    // 버튼 ON 메소드
+    public static void buttonOn(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(true);
-            isOpponentSwitchOn = true; // 상대방 스위치 상태 설정
-            opponentlastSwitchIdx = i; // 마지막으로 조작한 스위치 저장
+            isOpponentButtonOn = true; // 상대방 스위치 상태 설정
+            opponentlastButtonIndex = i; // 마지막으로 조작한 스위치 저장
         }
     }
 
-    // 스위치 OFF 메소드
-    public static void switchOff(int i) {
+    // 버튼 OFF 메소드
+    public static void buttonOff(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(false);
-            isOpponentSwitchOn = false;
-            opponentlastSwitchIdx = -1;
+            isOpponentButtonOn = false;
+            opponentlastButtonIndex = -1;
         }
     }
 
@@ -151,40 +156,39 @@ public class PlayPanel extends JPanel implements Runnable {
                 } else {
                     ClientFrame.penguinItemCount++;  // 펭귄 아이템 카운트 증가
                 }
-                //TODO:네트워크로 사라진 아이템 인덱스 보내주기
+                //사라진 아이템 인덱스 보내주기
                 ListenNetwork.SendObject(new ChatMsg("550", i, "ITEM"));
                 break;
-            } else
-                continue;
+            }
         }
     }
 
-    // 스위치가 켜졌는지 체크
-    public void playerOnSwitchCheck() {
+    // 버튼이 켜졌는지 체크
+    public void playerOnButtonCheck() {
         for (int i = 0; i < buttons.size(); i++) {
             Button s = buttons.get(i);
 
-            // 상대방이 이미 스위치를 눌렀다면 건너뛰기
-            if (isOpponentSwitchOn && opponentlastSwitchIdx == i) continue;
+            // 상대방이 이미 버튼을 눌렀다면 건너뛰기
+            if (isOpponentButtonOn && opponentlastButtonIndex == i) continue;
 
-            // 스위치 영역과 캐릭터 영역이 겹치는지 확인
+            // 버튼 영역과 캐릭터 영역이 겹치는지 확인
             if (characterRec.intersects(s.getRectButton())) {
-                if (!s.isSwitchOn()) { // 스위치가 꺼져 있으면
+                if (!s.isSwitchOn()) { // 버튼이 꺼져 있으면
                     moveButtonBlocksDown(); // 로컬에서 블록 내리기
-                    s.setSwitchOn(true); // 스위치 상태 변경
-                    isMySwitchOn = true;
-                    mylastOnSwitchIdx = i;
+                    s.setSwitchOn(true); // 버튼 상태 변경
+                    isMyButtonOn = true;
+                    mylastOnButtonIndex = i;
 
                     // 네트워크로 "SWITCH_ON" 이벤트 전송
                     ListenNetwork.SendObject(new ChatMsg("550", i, "SWITCH_ON"));
                     //break;
                 }
             } else {
-                if (isMySwitchOn && mylastOnSwitchIdx == i) { // 스위치를 벗어난 경우
+                if (isMyButtonOn && mylastOnButtonIndex == i) { // 버튼에서 벗어난 경우
                     moveButtonBlocksUp(); // 로컬에서 블록 올리기
-                    s.setSwitchOn(false); // 스위치 상태 변경
-                    isMySwitchOn = false;
-                    mylastOnSwitchIdx = -1;
+                    s.setSwitchOn(false); // 버튼 상태 변경
+                    isMyButtonOn = false;
+                    mylastOnButtonIndex = -1;
 
                     // 네트워크로 "SWITCH_OFF" 이벤트 전송
                     ListenNetwork.SendObject(new ChatMsg("550", i, "SWITCH_OFF"));
@@ -383,7 +387,7 @@ public class PlayPanel extends JPanel implements Runnable {
     public void systeminit() {
         status = 0;
         cnt = 0;
-        delay = 17;// 17/1000초 = 58 (프레임/초)
+        delay = 17;// 17/1000초
         keybuff = 0; // 키 입력 버퍼 초기화
 
         initState();
@@ -525,7 +529,7 @@ public class PlayPanel extends JPanel implements Runnable {
             }
         }
 
-        // 도달 여부 확인
+        // 도착 여부 확인
         if (!(isArrive && isOpponentArrive)) { // 모두 도착 X
             buffG.drawImage(character, myXpos, myYpos, this);
             if (!isOpponentDie) {
@@ -555,7 +559,7 @@ public class PlayPanel extends JPanel implements Runnable {
 
         }
 
-        g.drawImage(buffImg, 0, 0, this); // 화면g애 버퍼(buffG)에 그려진 이미지(buffImg)옮김. (도화지에 이미지를 출력)
+        g.drawImage(buffImg, 0, 0, this); // 이미지 출력
         repaint();
     }
 
@@ -572,7 +576,7 @@ public class PlayPanel extends JPanel implements Runnable {
                 }
                 if (isMovingLeft || isMovingRight)
                     xMoving();
-                playerOnSwitchCheck();
+                playerOnButtonCheck();
                 MovingInfo obcm = new MovingInfo("400", myXpos, myYpos, ClientFrame.userNum, myInfo.getState());
                 ListenNetwork.SendObject(obcm); // 서버로 현재 위치와 상태 정보를 전송.
                 try {
@@ -654,7 +658,8 @@ public class PlayPanel extends JPanel implements Runnable {
         isOpponentDie = true;
     }
 
-    public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
+    // 움직임 가능 여부 관련 함수 - 블럭/장애물/버튼블록
+    public boolean canMove(int x, int y) {
         myWidth = CHARACTER_WIDTH + 10;
         myHeight = CHARACTER_HEIGHT + 3;
         opponentWidth = CHARACTER_WIDTH + 10;
