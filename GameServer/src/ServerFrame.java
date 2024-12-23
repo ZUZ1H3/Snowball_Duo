@@ -197,7 +197,7 @@ public class ServerFrame extends JFrame {
                 room.getUserVec().add(this);
                 AppendText("새로운 참가자 " + UserName + " 입장.");
                 AppendText("참가자 " + room.getUserVec().size() + "/2");
-				return true;
+                return true;
             } else {
                 AppendText("새로운 참가자 " + UserName + " 입장 거절 당함.");
                 return false;
@@ -358,7 +358,7 @@ public class ServerFrame extends JFrame {
                                 int waitingPlayerNum = getPlayerNum();
                                 switch (waitingPlayerNum) {
                                     case 1:
-                                        obcm = new ChatMsg("SERVER",  "100", ALLOW_LOGIN_MSG + " " + waitingPlayerNum);
+                                        obcm = new ChatMsg("SERVER", "100", ALLOW_LOGIN_MSG + " " + waitingPlayerNum);
                                         WriteAllObject(obcm);
                                         break;
                                     case 2:
@@ -368,22 +368,31 @@ public class ServerFrame extends JFrame {
                                 }
 
                             } else { // 로그인 실패 시
-                                obcm = new ChatMsg("SERVER",  "100", DENY_LOGIN_MSG);
+                                obcm = new ChatMsg("SERVER", "100", DENY_LOGIN_MSG);
                                 oos.writeObject(obcm);
                                 break; //스레드 종료
                             }
                         } else if (cm.code.matches("200")) {
-                            obcm = new ChatMsg(cm.getUserName(),  "200", cm.getData());
+                            obcm = new ChatMsg(cm.getUserName(), "200", cm.getData());
                             WriteOtherObject(obcm);
                         } else if (cm.code.matches("300")) {
-                            obcm = new ChatMsg("[SERVER]","300", "게임을 시작합니다.");
+                            obcm = new ChatMsg("[SERVER]", "300", "게임을 시작합니다.");
                             WriteAllObject(obcm);
                         } else if (cm.code.matches("550")) {
                             obcm = new ChatMsg("550", cm.objIdx, cm.objType);
                             WriteOtherObject(obcm);
+                        } else if (cm.code.matches("301")) {
+                            obcm = new ChatMsg("[SERVER]", "301", "다음 스테이지로 진행합니다.");
+                            WriteAllObject(obcm);
+                            obcm = new ChatMsg("[SERVER]", "301", "새로운 맵을 로딩합니다.");
+                            WriteOtherObject(obcm); // 해당 명령어를 다른 클라이언트에게도 알림
+                        } else if (cm.code.matches("302")) {
+                            System.out.println("게임 RETRY 메시지 전송");
+                            obcm = new ChatMsg("[SERVER]", "302", "게임 초기화 후 다시 진행됩니다..");
+                            WriteAllObject(obcm);
                         } else if (cm.code.matches("600")) {
                             System.out.println("cm.getData = " + cm.getData());
-                            obcm = new ChatMsg(cm.getUserName(),"600", cm.getData());
+                            obcm = new ChatMsg(cm.getUserName(), "600", cm.getData());
                             WriteOtherObject(obcm);
                         } else if (cm.code.matches("999")) { // logout message 처리
                             System.out.println("999 받음");
@@ -417,6 +426,6 @@ public class ServerFrame extends JFrame {
 
     public String getUserNames() {
         Vector userNames = room.getUserNameVec();
-        return userNames.get(0)+"//"+userNames.get(1);
+        return userNames.get(0) + "//" + userNames.get(1);
     }
 }

@@ -1,12 +1,10 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 import javax.swing.JOptionPane;
+
 import Map.Item;
+
 //Server Message를 수신해서 화면에 표시
 public class ListenNetwork extends Thread {
     String ip_addr = "127.0.0.1";
@@ -55,7 +53,10 @@ public class ListenNetwork extends Thread {
                 try {
                     obcm = ois.readObject();
                     System.out.println("obcm read success");
-                } catch (ClassNotFoundException e) {
+                } catch (EOFException e) {
+                    System.out.println("스트림 끝에 도달했습니다.");
+                    break; // EOFException 발생 시 루프 종료
+                }catch (ClassNotFoundException e) {
                     e.printStackTrace();
                     break;
                 }
@@ -67,7 +68,7 @@ public class ListenNetwork extends Thread {
                     cm = (ChatMsg) obcm;
                     msg = String.format("[%s] %s", cm.getUserName(), cm.getData());
                     System.out.println(msg);
-                }else if (obcm instanceof MovingInfo) {
+                } else if (obcm instanceof MovingInfo) {
 //					System.out.println("obcm을 제대로 받음");
                     mi = (MovingInfo) obcm;
                 } else
@@ -75,7 +76,7 @@ public class ListenNetwork extends Thread {
                 if (cm != null) {
                     switch (cm.getCode()) {
                         case "100": // 서버 접속 결과 - allow,deny
-                            System.out.println(cm.getData()+" 데이터입니다");
+                            System.out.println(cm.getData() + " 데이터입니다");
                             String loginResult = cm.getData().split(" ")[0];
                             System.out.println("loginResult = " + loginResult + "로그인 성공 여부");
                             if (loginResult.equals(ALLOW_LOGIN_MSG)) {
@@ -127,7 +128,16 @@ public class ListenNetwork extends Thread {
                             ClientFrame.isPlayingScreen = true;
                             isPlayingGame = true;
                             break;
-
+                        case "301": //다음 스테이지 진행
+                            System.out.println("----------다음 스테이지 진행---------");
+                            ClientFrame.isChanged = true;
+                            ClientFrame.isNextStage = true;
+                            break;
+                        case "302": // 게임 오버 처리
+                            System.out.println("----------게임 Retry---------");
+                            ClientFrame.isChanged = true;
+                            ClientFrame.isRetry = true;
+                            break;
                         case "550":
                             if (cm.getObjType().equals("ITEM")) {
                                 int itemIdx = cm.getObjIdx();  // 아이템의 인덱스를 받아오기
@@ -145,29 +155,26 @@ public class ListenNetwork extends Thread {
                                 } else {
                                     System.out.println("아이템을 찾을 수 없습니다.");
                                 }
-                            }
-                            else if (cm.getObjType().equals("SWITCH_ON")) {
+                            } else if (cm.getObjType().equals("SWITCH_ON")) {
                                 GamePlayPanel.switchOn(cm.getObjIdx());
                                 GamePlayPanel.moveButtonBlocksDown(); // ButtonBlock 내리기
-                            }
-                            else if (cm.getObjType().equals("SWITCH_OFF")) {
+                            } else if (cm.getObjType().equals("SWITCH_OFF")) {
                                 GamePlayPanel.switchOff(cm.getObjIdx());
                                 GamePlayPanel.moveButtonBlocksUp(); // ButtonBlock 올리기
                             }
                             break;
 
                         case "600":
-                            if(cm.getData().equals("GameOver")) {
+                            if (cm.getData().equals("GameOver")) {
                                 ClientFrame.gameScreenPanel.setDieImage();
                                 isPlayingGame = false;
                             }
                             break;
                     }
-                }
-                else if(mi != null) {
+                } else if (mi != null) {
 //					System.out.println(mi);
 //					System.out.println("받은 데이터: "+mi.getPosX()+ mi.getPosY()+ mi.getType());
-                    if(ClientFrame.gameScreenPanel!=null)
+                    if (ClientFrame.gameScreenPanel != null)
                         ClientFrame.gameScreenPanel.setMovingInfo(mi.getPosX(), mi.getPosY(), mi.getType());
                     //break;
                 }
