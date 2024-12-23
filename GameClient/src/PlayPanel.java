@@ -12,12 +12,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class GamePlayPanel extends JPanel implements Runnable {
-    //화면 크기
+public class PlayPanel extends JPanel implements Runnable {
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
-
-    //캐릭터 크기
     private final int CHARACTER_WIDTH = 34;
     private final int CHARACTER_HEIGHT = 34;
 
@@ -97,9 +94,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
     public void gameControll() {
         playerItemGetCheck();
         playerObstacleCheck();
-        //if (items.size() == 0) {
         playerArriveCheck();
-        //}
     }
 
     // 상대방이 먹은 item 없애기
@@ -142,7 +137,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
     public void playerItemGetCheck() {
         for (int i = 0; i < items.size(); i++) {//Item m : items
-
             Item m = items.get(i);
             if (!(m.getMapNumber() % 2 == ClientFrame.userNum % 2)) continue;
 
@@ -154,14 +148,11 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 } else {
                     ClientFrame.penguinItemCount++;
                 }
-
                 //TODO:네트워크로 사라진 아이템 인덱스 보내주기
                 ListenNetwork.SendObject(new ChatMsg("550", i, "ITEM"));
-
                 break;
             } else
                 continue;
-
         }
     }
 
@@ -258,7 +249,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
         }
     }
 
-    //---------------------------------------------------
     //스레드 파트
     public void run() {
         try {
@@ -368,16 +358,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
         doors = map.getDoors();
         buttons = map.getButtons();
         buttonBlocks = map.getButtonBlocks();
-
-//        if (blocks != null) {
-//            System.out.println("Blocks initialized. Count: " + blocks.size());
-//            for (Block block : blocks) {
-//                System.out.println("Block X: " + block.getX() + ", Y: " + block.getY());
-//                System.out.println("Block Image: " + block.getBlockImage());
-//            }
-//        } else {
-//            System.out.println("Blocks are null!");
-//        }
     }
 
     public void initState() {
@@ -393,16 +373,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void systeminit() {
-        // 스레드 중복 실행 방지
-//        if (mainwork != null && mainwork.isAlive()) {
-//            mainwork.interrupt(); // 기존 스레드 종료
-//            try {
-//                mainwork.join(); // 종료 대기
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
         status = 0;
         cnt = 0;
         delay = 17;// 17/1000초 = 58 (프레임/초)
@@ -452,14 +422,13 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 break;
         }
         character = imageTool.getImage(myInfo.getCharacterImgPath());
-//	  System.out.println(new ImageIcon(character).getIconWidth()+","+new ImageIcon(character).getIconHeight());
         opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
 
         mainwork = new Thread(this);
         mainwork.start();
     }
 
-    public GamePlayPanel() {
+    public PlayPanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         systeminit();
 
@@ -509,7 +478,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
                         isMovingLeft = false;
                         break;
                 }
-                //repaint(); // 화면 갱신
             }
         };
     }
@@ -539,7 +507,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
             buffG.drawImage(door.getDoorImage(), door.getX(), door.getY(), this);
 
         for (ButtonBlock switchBlock : buttonBlocks) {
-            //if (switchBlock.getIsVisible())
             buffG.drawImage(switchBlock.getButtonBlockImage(), switchBlock.getX(), switchBlock.getY(), this);
         }
 
@@ -552,8 +519,6 @@ public class GamePlayPanel extends JPanel implements Runnable {
 
         if (!(isArrive && isOpponentArrive)) { // 모두 도착 X
             buffG.drawImage(character, myXpos, myYpos, this);
-//          System.out.println("draw character ==> "+character.toString());
-
             if (!isOpponentDie) {
                 switch (opponentInfo.getState()) {
                     case LEFT:
@@ -670,14 +635,12 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void setMoving(int x, int y, State type) {
-//    	System.out.println("setMoving이 불림");
         opponentXpos = x;
         opponentYpos = y;
         opponentInfo.setState(type);
     }
 
     public void setDieImage() {
-//    	System.out.println("opponent die Image");
         opponent = imageTool.getImage(opponentInfo.getDieImgPath());
         isOpponentDie = true;
     }

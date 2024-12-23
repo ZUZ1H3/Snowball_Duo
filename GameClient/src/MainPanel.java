@@ -21,10 +21,9 @@ public class MainPanel extends JPanel {
 
     public MainPanel(ClientFrame frame) {
         setLayout(null);
-        add(gameStartButton);  // 버튼 패널에 추가
+        add(gameStartButton);
         add(gameRulesButton);
 
-        // 스타트 버튼 클릭 리스너 추가
         gameStartButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -32,11 +31,11 @@ public class MainPanel extends JPanel {
                 frame.updateScreen(); // 화면 전환 메서드 호출
             }
 
-            public void mouseEntered(MouseEvent e){
+            public void mouseEntered(MouseEvent e) {
                 gameStartButton.setIcon(gameStartHoverImage);
             }
 
-            public void mouseExited(MouseEvent e){
+            public void mouseExited(MouseEvent e) {
                 gameStartButton.setIcon(gameStartImage);
             }
         });
@@ -48,11 +47,11 @@ public class MainPanel extends JPanel {
                 frame.updateScreen();  // 화면 전환 메서드 호출
             }
 
-            public void mouseEntered(MouseEvent e){
+            public void mouseEntered(MouseEvent e) {
                 gameRulesButton.setIcon(gameRulesHoverImage);
             }
 
-            public void mouseExited(MouseEvent e){
+            public void mouseExited(MouseEvent e) {
                 gameRulesButton.setIcon(gameRulesImage);
             }
         });
@@ -66,7 +65,7 @@ public class MainPanel extends JPanel {
         return button;
     }
 
-    // 기본 이미지를 BufferedImage로 변환
+    // 버튼 호버 효
     private BufferedImage applyColorFilter(ImageIcon icon, Color filterColor) {
         BufferedImage bufferedImage = new BufferedImage(
                 icon.getIconWidth(),

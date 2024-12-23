@@ -2,7 +2,6 @@
 
 public class PlayerInfo {
     int userNum;
-    //	Image character;
     String characterImgPath;
     String runRightImgPath;
     String runLeftImgPath;
@@ -18,10 +17,6 @@ public class PlayerInfo {
         this.userNum = userNum;
     }
 
-//	public void setCharacter(Image character) {
-//		this.character = character;
-//	}
-
     public void setCharacterImgPath(String characterImgPath) {
         this.characterImgPath = characterImgPath;
     }
@@ -36,15 +31,11 @@ public class PlayerInfo {
 
     public void setState(State type) {
         this.type = type;
-    }
+    } // 캐릭터의 상태를 설정하는 메서드 (예: FRONT, LEFT, RIGHT)
 
     public void setJumpImgPath(String jumpLeftImgPath) {  // 왼쪽 점프 이미지 경로 설정
         this.jumpLeftImgPath = jumpLeftImgPath;
     }
-
-//	public Image getCharacter() {
-//	   return character;
-//	}
 
     public String getCharacterImgPath() {
         return characterImgPath;

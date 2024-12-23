@@ -3,16 +3,16 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GameScreenPanel extends JPanel {
+public class ScreenPanel extends JPanel {
 
     public WaitingPanel waitingPanel;
-    private GamePlayPanel gamePlayPanel = null;
-    private GameOverPanel gameOverPanel = null;
+    private PlayPanel playPanel = null;
+    private OverPanel overPanel = null;
     private ChatPanel chatPanel;
-    private GameClearPanel gameClearPanel;
+    private ClearPanel clearPanel;
     private String userName;
 
-    public GameScreenPanel(ClientFrame clientFrame, String userName) {
+    public ScreenPanel(ClientFrame clientFrame, String userName) {
         this.userName = userName;
         setLayout(null);
         setSize(1000, 600);
@@ -34,13 +34,13 @@ public class GameScreenPanel extends JPanel {
     }
 
     public void changeToNextStage() {
-        remove(gameClearPanel);
-        if (gamePlayPanel == null) {
-            gamePlayPanel = new GamePlayPanel();
-            gamePlayPanel.setBounds(0, 0, 800, 600);
-            add(gamePlayPanel);
-            addKeyListener(gamePlayPanel.testKey);
-            gamePlayPanel.addMouseListener(new MouseAdapter() {
+        remove(clearPanel);
+        if (playPanel == null) {
+            playPanel = new PlayPanel();
+            playPanel.setBounds(0, 0, 800, 600);
+            add(playPanel);
+            addKeyListener(playPanel.testKey);
+            playPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     System.out.println("mouse click");
@@ -49,10 +49,10 @@ public class GameScreenPanel extends JPanel {
                 }
             });
         } else {
-            gamePlayPanel.setBounds(0, 0, 800, 600);
-            add(gamePlayPanel);
-            addKeyListener(gamePlayPanel.testKey);
-            gamePlayPanel.addMouseListener(new MouseAdapter() {
+            playPanel.setBounds(0, 0, 800, 600);
+            add(playPanel);
+            addKeyListener(playPanel.testKey);
+            playPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     System.out.println("mouse click");
@@ -66,12 +66,12 @@ public class GameScreenPanel extends JPanel {
 
     public void changeToPlaypanel() {
         remove(waitingPanel);
-        if (gamePlayPanel == null) {
-            gamePlayPanel = new GamePlayPanel();
-            gamePlayPanel.setBounds(0, 0, 800, 600);
-            add(gamePlayPanel);
-            addKeyListener(gamePlayPanel.testKey);
-            gamePlayPanel.addMouseListener(new MouseAdapter() {
+        if (playPanel == null) {
+            playPanel = new PlayPanel();
+            playPanel.setBounds(0, 0, 800, 600);
+            add(playPanel);
+            addKeyListener(playPanel.testKey);
+            playPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     System.out.println("mouse click");
@@ -82,7 +82,7 @@ public class GameScreenPanel extends JPanel {
         }
 
         if (chatPanel == null) { // chatPanel을 처음 생성하는 부분
-            chatPanel = new ChatPanel(userName); // 저장한 userName을 넘겨줌
+            chatPanel = new ChatPanel(); // 저장한 userName을 넘겨줌
             chatPanel.setBounds(800, 0, 200, 600);
             chatPanel.changePlayerList(ClientFrame.playerNames);
             add(chatPanel);
@@ -91,13 +91,13 @@ public class GameScreenPanel extends JPanel {
     }
 
     public void changeToRePlay() {
-        remove(gameOverPanel);  // 게임 오버 화면 제거
+        remove(overPanel);  // 게임 오버 화면 제거
         remove(chatPanel);
 
-        gamePlayPanel.setVisible(true);  // 기존 게임 플레이 화면 보이기
+        playPanel.setVisible(true);  // 기존 게임 플레이 화면 보이기
 
-        addKeyListener(gamePlayPanel.testKey);
-        gamePlayPanel.addMouseListener(new MouseAdapter() {
+        addKeyListener(playPanel.testKey);
+        playPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("mouse click");
@@ -106,7 +106,7 @@ public class GameScreenPanel extends JPanel {
             }
         });
 
-        chatPanel = new ChatPanel(userName);
+        chatPanel = new ChatPanel();
         chatPanel.setBounds(800, 0, 200, 600);  // 위치 설정
         chatPanel.changePlayerList(ClientFrame.playerNames);  // 플레이어 리스트 업데이트
         add(chatPanel);  // 채팅 패널 추가
@@ -115,32 +115,32 @@ public class GameScreenPanel extends JPanel {
     }
 
     public void changeToGameOverPanel() {
-        gamePlayPanel.setVisible(false);  // 게임 플레이 화면 숨기기
-        if (gameOverPanel == null) {
-            gameOverPanel = new GameOverPanel();
-            gameOverPanel.setBounds(0, 0, 800, 600);
-            add(gameOverPanel);
+        playPanel.setVisible(false);  // 게임 플레이 화면 숨기기
+        if (overPanel == null) {
+            overPanel = new OverPanel();
+            overPanel.setBounds(0, 0, 800, 600);
+            add(overPanel);
         }
         this.repaint();
     }
 
     public void changeToGameClearPanel(int fishCount, int shellCount) {
-        remove(gamePlayPanel);
-        if (gameClearPanel == null) {
-            gameClearPanel = new GameClearPanel(fishCount, shellCount);
-            gameClearPanel.setBounds(0, 0, 800, 600);
-            add(gameClearPanel);
+        remove(playPanel);
+        if (clearPanel == null) {
+            clearPanel = new ClearPanel(fishCount, shellCount);
+            clearPanel.setBounds(0, 0, 800, 600);
+            add(clearPanel);
         }
         this.repaint();
     }
 
     public void setMovingInfo(int x, int y, State type) {
-        if (gamePlayPanel != null)
-            gamePlayPanel.setMoving(x, y, type);
+        if (playPanel != null)
+            playPanel.setMoving(x, y, type);
     }
 
     public void setDieImage() {
-        gamePlayPanel.setDieImage();
+        playPanel.setDieImage();
     }
 
 }

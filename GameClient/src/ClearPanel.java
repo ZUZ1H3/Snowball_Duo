@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class GameClearPanel extends JPanel {
+public class ClearPanel extends JPanel {
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
     private Image backgroundImage = new ImageIcon("GameClient/image/background/background_ingame_dark.png").getImage();
@@ -20,18 +20,15 @@ public class GameClearPanel extends JPanel {
     private ImageIcon fullStar = new ImageIcon("GameClient/image/star_full.png");
 
     private ImageIcon yesImage = new ImageIcon("GameClient/image/yes.png");
-    private ImageIcon noImage = new ImageIcon("GameClient/image/no.png");
     private ImageIcon yesHoverImage = new ImageIcon(applyColorFilter(yesImage, Color.decode("#B4FDFF")));
-    private ImageIcon noHoverImage = new ImageIcon(applyColorFilter(noImage, Color.decode("#B4FDFF")));
 
     private JButton yesButton = new JButton(yesImage);
-    private JButton noButton = new JButton(noImage);
 
     private JLabel fishCountLabel = new JLabel();
     private JLabel shellCountLabel = new JLabel();
     private Font font_regular20 = new Font("Galmuri9 Regular", Font.PLAIN, 20);
 
-    public GameClearPanel(int fishCount, int shellCount) {
+    public ClearPanel(int fishCount, int shellCount) {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setLayout(null);
         setVisible(true);
@@ -44,13 +41,10 @@ public class GameClearPanel extends JPanel {
         fishCountLabel.setBounds(409, 311, 200, 20);
         shellCountLabel.setBounds(409, 353, 200, 20);
         continueLabel.setBounds(334, 405, 159, 18);
-        yesButton.setBounds(334, 441, 37, 15);
-        noButton.setBounds(457, 441, 31, 15);
+        yesButton.setBounds(390, 441, 37, 15);
 
         yesButton.setBorderPainted(false);
         yesButton.setContentAreaFilled(false);
-        noButton.setBorderPainted(false);
-        noButton.setContentAreaFilled(false);
 
         fishCountLabel.setText("X   " + fishCount);
         shellCountLabel.setText("X   " + shellCount);
@@ -59,7 +53,7 @@ public class GameClearPanel extends JPanel {
         shellCountLabel.setFont(font_regular20);
         shellCountLabel.setForeground(Color.WHITE);
 
-        updateStars(fishCount, shellCount);
+        updateStars(fishCount, shellCount); // 별 업데이트
 
         add(gameClearLabel);
         add(starLabel1);
@@ -71,11 +65,10 @@ public class GameClearPanel extends JPanel {
         add(shellCountLabel);
         add(continueLabel);
         add(yesButton);
-        add(noButton);
 
         yesButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) { // 게임 스테이지 전환 메시지 전송
                 ChatMsg obcm = new ChatMsg(ClientFrame.userName, "301", "NEXT_STAGE");
                 ListenNetwork.SendObject(obcm);
             }
@@ -88,23 +81,9 @@ public class GameClearPanel extends JPanel {
                 yesButton.setIcon(yesHoverImage);
             }
         });
-
-        noButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            public void mouseEntered(MouseEvent e) {
-                noButton.setIcon(noHoverImage);
-            }
-
-            public void mouseExited(MouseEvent e) {
-                noButton.setIcon(noImage);
-            }
-        });
     }
 
+    //버튼 호버 효과
     private BufferedImage applyColorFilter(ImageIcon icon, Color filterColor) {
         BufferedImage bufferedImage = new BufferedImage(
                 icon.getIconWidth(),
@@ -129,7 +108,6 @@ public class GameClearPanel extends JPanel {
     // 별 개수를 업데이트하는 메서드
     public void updateStars(int fishCount, int shellCount) {
         int total = fishCount + shellCount;
-
         if (total >= 10) {
             starLabel1.setIcon(fullStar);
             starLabel2.setIcon(fullStar);

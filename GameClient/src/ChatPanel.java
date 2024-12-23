@@ -12,7 +12,6 @@ public class ChatPanel extends JPanel {
     private JScrollPane chatHistoryScroll = new JScrollPane();
     public static JTextPane chatHistory;
     private JTextArea chatInput;
-    private String name; // player 닉네임
     private JButton sendBtn;
     private JPanel chatInputPane;
 
@@ -22,14 +21,13 @@ public class ChatPanel extends JPanel {
     private JLabel player1Label;
     private JLabel player2Label;
 
-    private JLabel timerLabel; // 스톱워치 라벨
-    private Timer timer;  // 스톱워치 타이머
-    private int seconds = 0; // 경과 시간 (초)
+    private JLabel timerLabel;
+    private Timer timer;
+    private int seconds = 0;
     private Font font_bold = new Font("Galmuri11 Bold", Font.PLAIN, 40);
     private Font font_regular12 = new Font("Galmuri9 Regular", Font.PLAIN, 12);
     private Font font_regular10 = new Font("Galmuri9 Regular", Font.PLAIN, 10);
-    public ChatPanel(String name) {
-        this.name = name; // 초기화 추가
+    public ChatPanel() {
         setSize(200, 600);
         setLayout(null);
         setChatHistory();
@@ -37,15 +35,16 @@ public class ChatPanel extends JPanel {
         setPlayerList();
         setTimer();
 
+        //채팅 전송 버튼
         sendBtn.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 String text = chatInput.getText();
-                if (ClientFrame.waitingPlayerNum == 2) { //접속한 사용자가 있을 때 - 네트워크 전송
+                if (ClientFrame.waitingPlayerNum == 2) { //접속한 사용자가 있을 때
                     ChatMsg msg = new ChatMsg(ClientFrame.userName, "200", text);
                     ListenNetwork.SendObject(msg);
                 }
 
-                appendText(ClientFrame.userName, text); //본인 채팅팬에 넣기
+                appendText(ClientFrame.userName, text); //본인 채팅 히스토리에 추가
                 chatInput.setText("");
             }
         });
@@ -65,6 +64,7 @@ public class ChatPanel extends JPanel {
         chatHistory.setBackground(BACKGROUND_COLOR);
     }
 
+    // 채팅 입력창과 전송 버튼 설정
     public void setChatInput() {
         chatInputPane = new JPanel();
         chatInputPane.setBounds(6, 516, 188, 74);
@@ -95,6 +95,7 @@ public class ChatPanel extends JPanel {
         chatInputPane.add(sendBtn);
     }
 
+    // 참여자 목록에 대한 레이블 설정
     public void setPlayerList() {
         playerListLabel.setForeground(Color.WHITE);
         playerListLabel.setBounds(58, 90, 188, 17);
@@ -130,6 +131,8 @@ public class ChatPanel extends JPanel {
                 break;
         }
     }
+
+    // 타이머 설정 메서드
     public void setTimer() {
         timerLabel = new JLabel("00:00");
         timerLabel.setFont(font_bold);
@@ -137,7 +140,6 @@ public class ChatPanel extends JPanel {
         timerLabel.setBounds(42, 33, 160, 53); // 위치 설정
         add(timerLabel);
 
-        // 타이머 설정
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,7 +149,7 @@ public class ChatPanel extends JPanel {
                 timerLabel.setText(String.format("%02d:%02d", minute, second));
             }
         });
-        timer.start(); // 타이머 시작
+        timer.start();
     }
 
     public void changePlayerList(ArrayList<String> playerNames) {
@@ -157,6 +159,7 @@ public class ChatPanel extends JPanel {
         this.repaint();
     }
 
+    // 채팅 내용 추가하는 메서드
     public static void appendText(String userName, String msg) {
         msg = msg.trim();
         int len = chatHistory.getDocument().getLength();
