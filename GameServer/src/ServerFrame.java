@@ -18,12 +18,11 @@ public class ServerFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     private int port;
     private JPanel contentPane;
-    JTextArea textArea;
+    JTextArea textArea; // 로그를 표시할 텍스트 영역
     private JTextField txtPortNumber;
     private ServerSocket socket; // 서버소켓
     private Socket client_socket; // accept() 에서 생성된 client 소켓
-
-    private Room room;
+    private Room room; //게임 룸
 
     private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
     private static final String ALLOW_LOGIN_MSG = "ALLOW";
@@ -85,17 +84,19 @@ public class ServerFrame extends JFrame {
         serverStartButton.setBounds(237, 21, 109, 15);
         serverStartButton.setBorderPainted(false);
         serverStartButton.setContentAreaFilled(false);  // 배경 없애기
+
+        // 서버 시작 버튼
         serverStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    socket = new ServerSocket(port);
+                    socket = new ServerSocket(port); // 서버 소켓 열기
                 } catch (NumberFormatException | IOException e1) {
                     e1.printStackTrace();
                 }
                 serverStartButton.setIcon(serverRunningImage);
                 serverStartButton.setBounds(195, 21, 154, 18);
-                serverStartButton.setEnabled(false); // 서버를 더이상 실행시키지 못 하게 막는다
-                txtPortNumber.setEnabled(false); // 더이상 포트번호 수정 못하게 막는다
+                serverStartButton.setEnabled(false); // 서버를 더이상 실행시키지 못 하게
+                txtPortNumber.setEnabled(false); // 더이상 포트번호 수정 불가
 
                 room = new Room(socket); //단일 서버
                 room.start();
@@ -107,10 +108,8 @@ public class ServerFrame extends JFrame {
         setVisible(true);
     }
 
-    // 새로운 참가자 accept() 하고 user thread를 새로 생성한다.
+    // 사용자가 접속을 기다리며 client 소켓을 받는 클래스
     class AcceptServer extends Thread {
-        @SuppressWarnings("unchecked")
-
         ServerSocket socket;
         private Vector UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
 
@@ -126,16 +125,17 @@ public class ServerFrame extends JFrame {
             return UserVec;
         }
 
+        // 서버는 사용자가 들어오면 대기하며 소켓 수신 후 처리
         public void run() {
             while (true) { // 사용자 접속을 계속해서 받기 위해 while문
                 try {
                     AppendText("Waiting new clients ..." + socket.getLocalPort());
-                    client_socket = socket.accept(); // accept가 일어나기 전까지는 무한 대기중
-                    AppendText("새로운 참가자 from " + client_socket);
-                    UserService new_user = new UserService(client_socket, this);
-                    UserVec.add(new_user); // 새로운 참가자 배열에 추가
-                    new_user.start(); // 만든 객체의 스레드 실행
-                    System.out.println("현재 참가자 수 " + UserVec.size());
+                    client_socket = socket.accept(); // 새로운 클라이언트가 연결될 때까지 대기
+                    AppendText("새로운 유저 from " + client_socket);
+                    UserService new_user = new UserService(client_socket, this); // 새로운 사용자 객체 생성
+                    UserVec.add(new_user); // 사용자 벡터에 추가
+                    new_user.start(); // 사용자 스레드 시작
+                    System.out.println("현재 유저 수 " + UserVec.size());
                 } catch (IOException e) {
                     AppendText("accept() error");
                 }
@@ -143,33 +143,22 @@ public class ServerFrame extends JFrame {
         }
     }
 
+    // 로그 메시지를 출력하는 메서드
     public void AppendText(String str) {
-        textArea.append("사용자로부터 들어온 메세지 : " + str + "\n");
+        textArea.append("메시지 : " + str + "\n");
         textArea.setCaretPosition(textArea.getText().length());
     }
 
+    // 서버에서 전송하는 객체의 내용을 출력하는 메서드
     public void AppendObject(ChatMsg msg) {
-        textArea.append("code = " + msg.code + "\n");
-        textArea.append("id = " + msg.UserName + "\n");
-        textArea.append("data = " + msg.data + "\n");
+        textArea.append("Code : " + msg.code + "\n");
+        textArea.append("ID : " + msg.UserName + "\n");
+        textArea.append("Data : " + msg.data + "\n");
         textArea.setCaretPosition(textArea.getText().length());
     }
 
-    public void AppendMovingInfo(MovingInfo msg) {
-        textArea.append("code = " + msg.getCode() + "\n");
-        textArea.append("posX = " + msg.getPosX() + "\n");
-        textArea.append("posY = " + msg.getPosY() + "\n");
-        textArea.append("characterNum = " + msg.getCharacterNum() + "\n");
-        textArea.append("type = " + msg.getType() + "\n");
-        textArea.setCaretPosition(textArea.getText().length());
-    }
-
+    // 클라이언트의 상태를 관리하는 UserService 클래스
     class UserService extends Thread {
-        private InputStream is;
-        private OutputStream os;
-        private DataInputStream dis;
-        private DataOutputStream dos;
-
         private ObjectInputStream ois;
         private ObjectOutputStream oos;
 
@@ -179,6 +168,7 @@ public class ServerFrame extends JFrame {
         public String UserName = "";
         public String UserStatus;
 
+        // 클라이언트 연결 설정, 입력 및 출력 스트림 초기화
         public UserService(Socket client_socket, AcceptServer acceptServer) {
             this.client_socket = client_socket;
             this.socket = acceptServer.getSocket();
@@ -192,43 +182,34 @@ public class ServerFrame extends JFrame {
             }
         }
 
+        // 로그인 시도
         public boolean Login() {
             if (room.enterRoom(UserName)) {
-                room.getUserVec().add(this);
-                AppendText("새로운 참가자 " + UserName + " 입장.");
-                AppendText("참가자 " + room.getUserVec().size() + "/2");
+                room.getUserVec().add(this); // 사용자 추가
+                AppendText(UserName + " 입장.");
+                AppendText("유저 " + room.getUserVec().size() + " / 2");
                 return true;
             } else {
-                AppendText("새로운 참가자 " + UserName + " 입장 거절 당함.");
+                AppendText(UserName + " 입장 거절 당함.");
                 return false;
             }
         }
 
+        // 게임에 입장한 사용자 수
         public int getPlayerNum() { // gameRoom에 입장한 플레이어 수
             return room.getUserVec().size();
         }
 
-
         public void Logout() {
             System.out.println("LOGOUT 중");
-            //gameRoom.getUserNameVec().remove(UserName);
             room.getUserVec().remove(this);
             System.out.println(room.getUserVec().size());
-            String msg = "[" + UserName + "]님이 퇴장 하였습니다.\n";
+            String msg = "[" + UserName + "]님이 퇴장 했습니다..\n";
             user_vc.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-            AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + user_vc.size());
+            AppendText("사용자 " + "[" + UserName + "] 퇴장. 남은 참가자 수 " + user_vc.size());
         }
 
-        // 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
-        public void WriteAll(String str) {
-            for (int i = 0; i < user_vc.size(); i++) {
-                UserService user = (UserService) user_vc.elementAt(i);
-                if (user.UserStatus == "O")
-                    user.WriteOne(str);
-            }
-        }
-
-        // 모든 User들에게 Object를 방송. 채팅 message와 image object를 보낼 수 있다
+        // 모든 User들에게 Object를 방송
         public void WriteAllObject(Object ob) {
             Vector gameRoomUserVec = room.getUserVec();
             int userVecSize = gameRoomUserVec.size();
@@ -236,15 +217,6 @@ public class ServerFrame extends JFrame {
                 UserService user = (UserService) gameRoomUserVec.elementAt(i);
                 if (user.UserStatus == "O")
                     user.WriteOneObject(ob);
-            }
-        }
-
-        // 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
-        public void WriteOthers(String str) {
-            for (int i = 0; i < user_vc.size(); i++) {
-                UserService user = (UserService) user_vc.elementAt(i);
-                if (user != this && user.UserStatus == "O")
-                    user.WriteOne(str);
             }
         }
 
@@ -256,44 +228,6 @@ public class ServerFrame extends JFrame {
                 if (user != this) {
                     user.WriteOneObject(ob);
                 }
-            }
-        }
-
-        // Windows 처럼 message 제외한 나머지 부분은 NULL 로 만들기 위한 함수
-        public byte[] MakePacket(String msg) {
-            byte[] packet = new byte[BUF_LEN];
-            byte[] bb = null;
-            int i;
-            for (i = 0; i < BUF_LEN; i++)
-                packet[i] = 0;
-            try {
-                bb = msg.getBytes("euc-kr");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            for (i = 0; i < bb.length; i++)
-                packet[i] = bb[i];
-            return packet;
-        }
-
-        // UserService Thread가 담당하는 Client 에게 1:1 전송
-        public void WriteOne(String msg) {
-            try {
-                ChatMsg obcm = new ChatMsg("SERVER", "200", msg);
-                oos.writeObject(obcm);
-            } catch (IOException e) {
-                AppendText("dos.writeObject() error");
-                try {
-                    ois.close();
-                    oos.close();
-                    client_socket.close();
-                    client_socket = null;
-                    ois = null;
-                    oos = null;
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                Logout(); // 에러가난 현재 객체를 벡터에서 지운다
             }
         }
 
@@ -342,19 +276,16 @@ public class ServerFrame extends JFrame {
                         AppendObject(cm);
                     } else if (obcm instanceof MovingInfo) {
                         mi = (MovingInfo) obcm;
-//						AppendMovingInfo(mi);
                     } else {
                         continue;
                     }
                     if (cm != null) {
-                        System.out.println("cm 받음=========================");
                         if (cm.code.matches("100")) { // login
                             System.out.println(cm.toString());
                             AppendText("로그인 요청 받음");
                             UserName = cm.UserName;
                             UserStatus = "O"; // Online 상태
                             if (Login()) { // 로그인 성공시
-
                                 int waitingPlayerNum = getPlayerNum();
                                 switch (waitingPlayerNum) {
                                     case 1:
@@ -394,14 +325,8 @@ public class ServerFrame extends JFrame {
                             System.out.println("cm.getData = " + cm.getData());
                             obcm = new ChatMsg(cm.getUserName(), "600", cm.getData());
                             WriteOtherObject(obcm);
-                        } else if (cm.code.matches("999")) { // logout message 처리
-                            System.out.println("999 받음");
-                            Logout();
-                            break;
-                        } else { // 300, 500, ... 기타 object는 모두 방송한다.
-                            //						WriteAllObject(cm);
                         }
-                    } // end of cm != null
+                    }
                     else if (mi != null) {
                         WriteOtherObject(obcm);
                     }
@@ -409,8 +334,6 @@ public class ServerFrame extends JFrame {
                 } catch (IOException e) {
                     AppendText("ois.readObject() error");
                     try {
-//						dos.close();
-//						dis.close();
                         ois.close();
                         oos.close();
                         client_socket.close();
@@ -418,12 +341,11 @@ public class ServerFrame extends JFrame {
                         break;
                     } catch (Exception ee) {
                         break;
-                    } // catch문 끝
-                } // 바깥 catch문끝
-            } // while
-        } // run
+                    }
+                }
+            }
+        }
     }
-
     public String getUserNames() {
         Vector userNames = room.getUserNameVec();
         return userNames.get(0) + "//" + userNames.get(1);

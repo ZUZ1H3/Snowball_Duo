@@ -57,7 +57,7 @@ public class ClientFrame extends JFrame {
     // 초기화 메서드
     public static void init() {
         isGameMainScreen = false;
-        isGameRulesScreen = false;  // 게임 규칙 화면 초기화
+        isGameRulesScreen = false;
         isGameStartScreen = false;
     }
 

@@ -43,13 +43,13 @@ public class WaitingPanel extends JPanel {
         add(penguinLabel);
         add(sealLabel);
         add(loadingLabel);
-        changeWaitPlayerNum();
+        changeWaitPlayerNum();  // 플레이어 수에 따른 레이아웃 변경
         penguinLabel.setBounds(425, 197, 80, 80);
         sealLabel.setBounds(505, 186, 70, 70);
         loadingLabel.setBounds(434, 282, loadingImage[1].getIconWidth(), loadingImage[1].getIconHeight());  // 위치와 크기 설정
         startJumpTimer();
         startLoadingTimer();
-        changePlayerNum(ClientFrame.waitingPlayerNum);
+        changePlayerNum(ClientFrame.waitingPlayerNum); // 초기 플레이어 수 설정
 
         backButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -75,7 +75,7 @@ public class WaitingPanel extends JPanel {
         loadingTimer.start();
     }
 
-
+    // 로딩 이미지를 변경하는 메서드
     private void changeLoadingIcon() {
         int currentIconIndex = (java.util.Arrays.asList(loadingImage).indexOf(loadingLabel.getIcon()) + 1) % loadingImage.length;
         loadingLabel.setIcon(loadingImage[currentIconIndex]);
@@ -120,6 +120,7 @@ public class WaitingPanel extends JPanel {
         sealLabel.setBounds(506, 207 - sealJumpHeight, 70, 70);
     }
 
+    // 대기 중인 플레이어 수에 따른 상태 변화
     public void changeWaitPlayerNum() {
         changePlayerNum(ClientFrame.waitingPlayerNum); // gameRoom에 입장한 플레이어 수
         if (ClientFrame.waitingPlayerNum == 2) {
@@ -128,6 +129,7 @@ public class WaitingPanel extends JPanel {
         this.repaint();
     }
 
+    // 참여한 플레이어 수에 따라 UI 변경
     public void changePlayerNum(int waitingPlayerNum) { // 참여한 플레이어 수 이미지 변경
         switch (waitingPlayerNum) {
             case 1: {
@@ -145,11 +147,12 @@ public class WaitingPanel extends JPanel {
         repaint();
     }
 
+    // 두 명 입장 시 게임 시작 버튼 추가
     public void addGameStartBtn() {
         if (ClientFrame.userNum == 1) {
             startButton.addMouseListener(new MouseAdapter() { // game start 버튼 눌렀을 때 동작
                 public void mousePressed(MouseEvent e) {
-                    ChatMsg obcm = new ChatMsg(ClientFrame.userName, "300", "★Game Start!★"); // gameRoom 입장 시도
+                    ChatMsg obcm = new ChatMsg(ClientFrame.userName, "300", "★ GAME START ★"); // gameRoom 입장 시도
                     ListenNetwork.SendObject(obcm);
                     startButton.setEnabled(false);
                 }
@@ -186,6 +189,7 @@ public class WaitingPanel extends JPanel {
         return bufferedImage;
     }
 
+    // 이미지 버튼 생성 메서드 (위치, 크기 설정)
     private JButton createImageButton(ImageIcon image, int x, int y, int width, int height) {
         JButton button = new JButton(image);
         button.setBounds(x, y, width, height);

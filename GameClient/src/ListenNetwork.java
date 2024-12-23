@@ -193,21 +193,6 @@ public class ListenNetwork extends Thread {
         }
     }
 
-    public void exitRoom() {
-        ChatMsg obcm = new ChatMsg(this.userName, "999");
-        System.out.println(obcm.getUserName() + ", " + obcm.getCode() + ", " + obcm.getData());
-        SendObject(obcm);
-        try {
-            ois.close();
-            oos.close();
-            socket.close();
-            ClientFrame.net = null;
-        } catch (Exception ee) {
-            System.out.println("erorr");
-        }
-        this.interrupt();
-    }
-
     public static void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드
         try {
             oos.writeObject(ob);
