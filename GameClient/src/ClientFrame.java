@@ -14,6 +14,7 @@ public class ClientFrame extends JFrame {
 
     public static boolean isGameOverPanel;
     public static boolean isGameClearPanel;
+    public static boolean isRetry;
 
     public static boolean isNextStage;
 
@@ -91,6 +92,12 @@ public class ClientFrame extends JFrame {
             System.out.println("게임 오버 화면으로 전환되어야함");
             isGameOverPanel = false;
             gameScreenPanel.changeToGameOverPanel();
+        }
+        else if (isRetry) {
+            System.out.println("다시 시작하는 화면으로 전환되어야함");
+            isRetry = false;
+            isGameOverPanel = false;
+            gameScreenPanel.changeToRePlay();
         }
         else if (isGameClearPanel) {
             System.out.println("게임 클리어 화면으로 전환되어야함");

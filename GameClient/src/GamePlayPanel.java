@@ -80,8 +80,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     Image opponent;
     Rectangle characterRec;
 
-    Image openPengDoorImg = imageTool.getImage("GameClient/image/map/open_door.png");
-    Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/open_door.png");
+    Image openPengDoorImg = imageTool.getImage("GameClient/image/map/open_peng_door.png");
+    Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/open_harp_door.png");
 
     // 이미지 버퍼
     Image buffImg;
@@ -269,8 +269,35 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 gameControll();
                 if (isDie || isOpponentDie) {
                     //죽은 경우 -> 스레드 종료
-                    Thread.sleep(1000);
-                    break;
+                    Thread.sleep(1100);
+                    ClientFrame.isChanged = true;
+                    ClientFrame.isGameOverPanel = true;
+
+                    while (ClientFrame.isGameOverPanel) {
+                        Thread.sleep(100);
+                    }
+
+//                    if(ClientFrame.isGameOverPanel == false) {
+//                        systeminit();
+//
+//                        switch (ClientFrame.userNum) {
+//                            case 1:
+//                                myXpos = 650;
+//                                myYpos = 507;
+//
+//                                opponentXpos = 700;
+//                                opponentYpos = 507;
+//                                break;
+//                            case 2:
+//                                myXpos = 700;
+//                                myYpos = 507;
+//
+//                                opponentXpos = 650;
+//                                opponentYpos = 507;
+//                                break;
+//                        }
+//                    }
+
                 } else if (isGameClear) {
                     if (stageNum == 1) {
                         Thread.sleep(1100);
@@ -339,10 +366,10 @@ public class GamePlayPanel extends JPanel implements Runnable {
             }
 
             //gameoverpanel로 이동
-            if( isDie || isOpponentDie ) {
-                ClientFrame.isChanged = true;
-                ClientFrame.isGameOverPanel = true;
-            }
+//            if( isDie || isOpponentDie ) {
+//                ClientFrame.isChanged = true;
+//                ClientFrame.isGameOverPanel = true;
+//            }
 
 //            else if (isGameClear) {
 //                moveThread.interrupt();
@@ -400,13 +427,22 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void systeminit() {
+        // 스레드 중복 실행 방지
+//        if (mainwork != null && mainwork.isAlive()) {
+//            mainwork.interrupt(); // 기존 스레드 종료
+//            try {
+//                mainwork.join(); // 종료 대기
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
         status = 0;
         cnt = 0;
         delay = 17;// 17/1000초 = 58 (프레임/초)
         keybuff = 0;
 
         initState();
-
         setMap();
 
         // 캐릭터 설정
@@ -452,9 +488,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
         character = imageTool.getImage(myInfo.getCharacterImgPath());
 //	  System.out.println(new ImageIcon(character).getIconWidth()+","+new ImageIcon(character).getIconHeight());
         opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
+
         mainwork = new Thread(this);
         mainwork.start();
-
     }
 
     public GamePlayPanel() {

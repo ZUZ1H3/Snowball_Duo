@@ -90,6 +90,25 @@ public class GameScreenPanel extends JPanel {
         this.repaint();
     }
 
+    public void changeToRePlay() {
+        remove(gameOverPanel);
+        if (gamePlayPanel == null) {
+            gamePlayPanel = new GamePlayPanel();
+            gamePlayPanel.setBounds(0, 0, 800, 600);
+            add(gamePlayPanel);
+            addKeyListener(gamePlayPanel.testKey);
+            gamePlayPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.out.println("mouse click");
+                    requestFocus();
+                    setFocusable(true);
+                }
+            });
+        }
+        this.repaint();
+    }
+
     public void changeToGameOverPanel() {
         remove(gamePlayPanel);
         if(gameOverPanel == null) {
