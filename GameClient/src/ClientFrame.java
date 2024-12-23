@@ -14,6 +14,9 @@ public class ClientFrame extends JFrame {
 
     public static boolean isGameOverPanel;
     public static boolean isGameClearPanel;
+    public static boolean isRetry;
+
+    public static boolean isNextStage;
 
     public static int penguinItemCount = 0; // 획득한 물고기 개수
     public static int harpSealItemCount = 0; // 획득한 조개 개수
@@ -90,10 +93,22 @@ public class ClientFrame extends JFrame {
             isGameOverPanel = false;
             gameScreenPanel.changeToGameOverPanel();
         }
+        else if (isRetry) {
+            System.out.println("다시 시작하는 화면으로 전환되어야함");
+            isRetry = false;
+            isGameOverPanel = false;
+            gameScreenPanel.changeToRePlay();
+        }
         else if (isGameClearPanel) {
             System.out.println("게임 클리어 화면으로 전환되어야함");
             isGameClearPanel = false;
             gameScreenPanel.changeToGameClearPanel(penguinItemCount, harpSealItemCount);
+        }
+        else if (isNextStage) {
+            System.out.println("다음단계 게임 화면으로 전환되어야함");
+            isNextStage = false;
+            isGameClearPanel = false;
+            gameScreenPanel.changeToNextStage();
         }
         revalidate();
         repaint();

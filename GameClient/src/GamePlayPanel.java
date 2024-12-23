@@ -62,6 +62,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     boolean isOpponentArrive = false;
     boolean isGameClear = false;
 
+    boolean clear_continue_yes = false; //클리어 하고 continue yes
+
     int resetTotalDistance = 150;
     int jumpingTotalDistance = resetTotalDistance;
     int jumpingDist = 9;
@@ -78,8 +80,8 @@ public class GamePlayPanel extends JPanel implements Runnable {
     Image opponent;
     Rectangle characterRec;
 
-    Image openPengDoorImg = imageTool.getImage("GameClient/image/map/open_door.png");
-    Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/open_door.png");
+    Image openPengDoorImg = imageTool.getImage("GameClient/image/map/open_peng_door.png");
+    Image openHarpDoorImg = imageTool.getImage("GameClient/image/map/open_harp_door.png");
 
     // 이미지 버퍼
     Image buffImg;
@@ -107,7 +109,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
         items.remove(i);
     }
 
-    public static void switchOn(int i) { // 상대방이 먹은 item 없애기
+    public static void switchOn(int i) {
         if (buttons != null) {
             buttons.get(i).setSwitchState(true);
             isOpponentSwitchOn = true;
@@ -267,8 +269,35 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 gameControll();
                 if (isDie || isOpponentDie) {
                     //죽은 경우 -> 스레드 종료
-                    Thread.sleep(1000);
-                    break;
+                    Thread.sleep(1100);
+                    ClientFrame.isChanged = true;
+                    ClientFrame.isGameOverPanel = true;
+
+                    while (ClientFrame.isGameOverPanel) {
+                        Thread.sleep(100);
+                    }
+
+//                    if(ClientFrame.isGameOverPanel == false) {
+//                        systeminit();
+//
+//                        switch (ClientFrame.userNum) {
+//                            case 1:
+//                                myXpos = 650;
+//                                myYpos = 507;
+//
+//                                opponentXpos = 700;
+//                                opponentYpos = 507;
+//                                break;
+//                            case 2:
+//                                myXpos = 700;
+//                                myYpos = 507;
+//
+//                                opponentXpos = 650;
+//                                opponentYpos = 507;
+//                                break;
+//                        }
+//                    }
+
                 } else if (isGameClear) {
                     if (stageNum == 1) {
                         Thread.sleep(1100);
@@ -285,10 +314,28 @@ public class GamePlayPanel extends JPanel implements Runnable {
                             stageNum = 2;  // 두 번째 스테이지로 변경
                             setMap();  // 두 번째 스테이지 맵 설정
                             initState();  // 두 번째 스테이지 초기화
+
+                            switch (ClientFrame.userNum) {
+                                case 1:
+                                    myXpos = 70;
+                                    myYpos = 507;
+
+                                    opponentXpos = 110;
+                                    opponentYpos = 507;
+                                    break;
+                                case 2:
+                                    myXpos = 110;
+                                    myYpos = 507;
+
+                                    opponentXpos = 70;
+                                    opponentYpos = 507;
+                                    break;
+                            }
                         }
                         //stageNum = 2;
                         //setMap();
                         //initState();
+
 //                        switch (ClientFrame.userNum) {
 //                            case 1:
 //                                myXpos = 35;
@@ -319,17 +366,17 @@ public class GamePlayPanel extends JPanel implements Runnable {
             }
 
             //gameoverpanel로 이동
-            if( isDie || isOpponentDie ) {
-                ClientFrame.isChanged = true;
-                ClientFrame.isGameOverPanel = true;
-            }
+//            if( isDie || isOpponentDie ) {
+//                ClientFrame.isChanged = true;
+//                ClientFrame.isGameOverPanel = true;
+//            }
 
-            else if (isGameClear) {
-                moveThread.interrupt();
-                ClientFrame.net.isPlayingGame = false;
-                ClientFrame.isChanged = true;
-                ClientFrame.isGameClearPanel = true;
-            }
+//            else if (isGameClear) {
+//                moveThread.interrupt();
+//                ClientFrame.net.isPlayingGame = false;
+//                ClientFrame.isChanged = true;
+//                ClientFrame.isGameClearPanel = true;
+//            }
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -337,7 +384,17 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void setMap() {
-        String mapPath = "GameClient/src/resource/map.txt";
+        String mapPath = "";
+        switch(stageNum) {
+            case 1:
+                mapPath = "GameClient/src/resource/map.txt";
+                break;
+            case 2:
+                mapPath = "GameClient/src/resource/map2.txt";
+                break;
+        }
+
+
         map = new Map(mapPath);
         blocks = map.getBlocks();
         barriers = map.getBarriers();
@@ -370,13 +427,22 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public void systeminit() {
+        // 스레드 중복 실행 방지
+//        if (mainwork != null && mainwork.isAlive()) {
+//            mainwork.interrupt(); // 기존 스레드 종료
+//            try {
+//                mainwork.join(); // 종료 대기
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
         status = 0;
         cnt = 0;
         delay = 17;// 17/1000초 = 58 (프레임/초)
         keybuff = 0;
 
         initState();
-
         setMap();
 
         // 캐릭터 설정
@@ -386,7 +452,7 @@ public class GamePlayPanel extends JPanel implements Runnable {
                 myInfo.setCharacterImgPath("GameClient/image/character/penguin_ingame.png");
                 myInfo.setRunRightImgPath("GameClient/image/character/penguin_right.png");
                 myInfo.setRunLeftImgPath("GameClient/image/character/penguin_left.png");
-                myInfo.setJumpImgPath("GameClient/image/character/penguin_jump_left.png");
+                myInfo.setJumpImgPath("GameClient/image/character/penguin_jump.png");
                 myXpos = 650;
                 myYpos = 507;
 
@@ -422,9 +488,9 @@ public class GamePlayPanel extends JPanel implements Runnable {
         character = imageTool.getImage(myInfo.getCharacterImgPath());
 //	  System.out.println(new ImageIcon(character).getIconWidth()+","+new ImageIcon(character).getIconHeight());
         opponent = imageTool.getImage(opponentInfo.getCharacterImgPath());
+
         mainwork = new Thread(this);
         mainwork.start();
-
     }
 
     public GamePlayPanel() {

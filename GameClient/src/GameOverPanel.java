@@ -41,7 +41,9 @@ public class GameOverPanel extends JPanel {
         yesButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                //yesButton을 눌렀을때
+                ClientFrame.isChanged = true;
+                ClientFrame.isRetry = true;
             }
 
             public void mouseEntered(MouseEvent e) {

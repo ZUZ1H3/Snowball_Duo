@@ -76,7 +76,9 @@ public class GameClearPanel extends JPanel {
         yesButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                //yes를 클릭했을때
+                ClientFrame.isChanged = true;
+                ClientFrame.isNextStage = true;
             }
 
             public void mouseEntered(MouseEvent e) {
