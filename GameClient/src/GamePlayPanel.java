@@ -318,17 +318,17 @@ public class GamePlayPanel extends JPanel implements Runnable {
                             switch (ClientFrame.userNum) {
                                 case 1:
                                     myXpos = 70;
-                                    myYpos = 507;
+                                    myYpos = 100;
 
                                     opponentXpos = 110;
-                                    opponentYpos = 507;
+                                    opponentYpos = 100;
                                     break;
                                 case 2:
                                     myXpos = 110;
-                                    myYpos = 507;
+                                    myYpos = 100;
 
                                     opponentXpos = 70;
-                                    opponentYpos = 507;
+                                    opponentYpos = 100;
                                     break;
                             }
                         }
@@ -683,10 +683,10 @@ public class GamePlayPanel extends JPanel implements Runnable {
     }
 
     public boolean canMove(int x, int y) { // 블럭, 장애물의 위=0,아래=1,좌=2,우=3, 어딘가=4
-        myWidth = CHARACTER_WIDTH;
-        myHeight = CHARACTER_HEIGHT;
-        opponentWidth = CHARACTER_WIDTH;
-        opponentHeight = CHARACTER_HEIGHT;
+        myWidth = CHARACTER_WIDTH + 10;
+        myHeight = CHARACTER_HEIGHT + 3;
+        opponentWidth = CHARACTER_WIDTH + 10;
+        opponentHeight = CHARACTER_HEIGHT + 3;
 
         characterRec = new Rectangle(x, y, myWidth, myHeight);
 
