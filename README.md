@@ -1,4 +1,4 @@
-##  Snowball Duo ☃️
+## ☃️Snowball Duo - Socket 기반 실시간 멀티플레이어 게임
 2024년 3학년 2학기 네트워크프로그래밍 기말 프로젝트입니다.
 <br><br>
 
